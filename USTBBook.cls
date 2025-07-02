@@ -62,6 +62,15 @@
   { ctex~ v2.4.9~ 2017-04-01 }
 }
 
+% 避免 \sim 被 exam-zh-symbols 宏包覆盖
+\AddToHook{package/exam-zh-symbols/before}{%
+  \AtBeginDocument{\let\savedsim=\sim}
+}
+\AddToHook{package/exam-zh-symbols/after}{%
+  \AtBeginDocument{\let\sim=\savedsim}
+}
+
+
 % 建议在模板开始处载入全部宏包，不要轻易改变加载顺序。
 \RequirePackage { etoolbox }
 \RequirePackage [
@@ -75,10 +84,13 @@
 \RequirePackage { xeCJKfntef }
 \RequirePackage { fancyhdr }
 \RequirePackage { lastpage }
-\RequirePackage { amsmath }
-\RequirePackage [ shortlabels ] { enumitem }
+\RequirePackage { amsmath, mathtools }
+\RequirePackage [ shortlabels, inline ] { enumitem }
 \RequirePackage { titlesec }
 \RequirePackage { varwidth }
+\RequirePackage { pifont }
+\RequirePackage { tabu, booktabs, tabularx }
+\RequirePackage { fontawesome }
 \RequirePackage { ocgx2 }
 
 \RequirePackage { exam-zh-question }
@@ -451,6 +463,9 @@
     }
 }
 
+% 每节重置题号
+\AddToHook{cmd/section/before}{\int_gset:Nn \g__examzh_question_index_int {1}}
+
 % ========== 选修节接口 ========== %
 %       会在标题前加上"*"
 % 用法: \esection{选修内容标题}
@@ -462,5 +477,157 @@
 }
 % =============================== %
 %%%%%%%%%%%%%%%%%%%%%%%%%%% 章节样式 %%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% 默认的 enumerate 环境
+\setlist[enumerate]{(1), left=\parindent, itemsep=0pt, align=left}
+\newlist{inenum}{enumerate*}{2}
+\setlist[inenum]{(1), itemjoin={\quad}}
+
+\RequirePackage { tasks }
+\NewTasksEnvironment[
+  label=(\arabic*),
+  % item-indent=2em,
+  label-width=2em,
+  label-offset=0.3em,
+  label-align=right,
+  after-item-skip=\parsep,
+  after-skip=\parsep,
+  before-skip=\parsep,
+  % resume=true   %% comment this for not to resume
+]{tabenum}[\item](2)    %% (2) here makes all of them in 2 columns
+
+%%%%%%%%%%%%%%%%%%%%%%%%%% 一些数学符号 %%%%%%%%%%%%%%%%%%%%%%%%%%
+\RequirePackage{extarrows}
+
+\RequirePackage{fixdif}
+\newdif{\dif}{\mathrm{d}}
+
+\DeclareMathOperator{\re}{e}
+\DeclareMathOperator{\ri}{i}
+\DeclareMathOperator{\cov}{cov}
+\DeclareMathOperator{\sgn}{sgn}
+\DeclareMathOperator{\rot}{\mathbf{rot}}
+\DeclareMathOperator{\grad}{\mathbf{grad}}
+\DeclareMathOperator{\divd}{div}
+\DeclareMathOperator{\ch}{ch}
+\DeclareMathOperator{\sh}{sh}
+\DeclareMathOperator{\arccot}{arccot}
+
+\NewDocumentCommand \abs { m }
+{\left| #1 \right|}
+
+\renewcommand{\Re}{\operatorname{Re}}
+\renewcommand{\Im}{\operatorname{Im}}
+\renewcommand{\le}{\leqslant}
+\renewcommand{\leq}{\leqslant}
+\renewcommand{\ge}{\geqslant}
+\renewcommand{\geq}{\geqslant}
+\renewcommand\parallel{\mathrel{/\mskip-2.5mu/}}
+
+\everymath{\displaystyle}
+\allowdisplaybreaks
+
+\numberwithin{equation}{section}
+\renewcommand\theequation{\arabic{section}-\arabic{equation}}
+%%%%%%%%%%%%%%%%%%%%%%%%%% 一些数学符号 %%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\keys_set:nn { exam-zh } {
+  choices/label = (\Alph*),
+  symbols/change-frac-style = true,
+  symbols/change-dfrac-style = true,
+  solution/blank-type = manual,
+  solution/show-solution = show-stay,
+  solution/label-content = {\color{blue}{\heiti 解}},
+  solution/qedsymbol = {\color{blue}{$\square$}},
+  question/show-answer = true,
+  problem/show-answer = true,
+  paren/show-answer = true,
+  fillin/show-answer = true,
+  paren/text-color = blue,
+  fillin/text-color = blue,
+  solution/text-color = blue,
+  textfigure/fig-pos = right,
+}
+
+% 选修内容对应的题目
+\NewDocumentEnvironment { question* } { O{} +b }
+{
+  \group_begin:
+  \__examzh_question_begin:nn {label={*\arabic*.},#1}{#2}
+}
+{
+  \__examzh_question_end:nn {#1}{#2}
+  \group_end:
+}
+
+% 解析环境
+\NewDocumentEnvironment{analysis}{ O{} }
+{
+  \begin{solution}[label-content={\color{blue}{\heiti 解析}},blank-type=none,#1]}{
+  \end{solution}
+}
+
+% 尾注环境
+\NewDocumentEnvironment{note}{ O{} }
+{
+  \begin{solution}[label-content=【尾注】,text-color=black,show-qed=false,parbreak=true,#1]
+    \setlength{\parindent}{2em}}{
+  \end{solution}
+}
+
+% 证明题环境
+\RenewDocumentEnvironment{proof}{ O{} }
+{
+  \begin{solution}[label-content={\color{blue}{\heiti 证明}},blank-type=manual,#1]}{
+  \end{solution}
+}
+
+% 定义文本盒子
+\DeclareTColorBox{pabox}{ O{ } m O{ blue } }
+{
+  colback=#3!5!white,
+  colframe=#3!45!gray,
+  colbacktitle=#3!5!white,
+  coltitle=#3!45!gray,
+  titlerule=0mm,
+  toprule=0mm,
+  bottomrule=0mm,
+  rightrule=0mm,
+  leftrule=.5mm,
+  boxsep=0mm,
+  breakable,
+  % frame hidden,
+  % interior hidden,
+  % detach title,
+  % sharpish corners,
+  fonttitle=\bfseries,
+  label=#2,
+  % title={\faMortarBoard~ #2},
+  #1
+}
+
+% 笔记环境
+\NewDocumentEnvironment{ notes }{ O{ } o o +b }
+{
+  \bool_if:NTF \g__examzh_solution_show_bool
+  {
+    \begin{pabox}[]{\IfNoValueTF{#2}{#1}{#2}}[#3]
+      \group_begin:
+      {\color{blue!45!gray} \faMortarBoard~ {\bfseries #1}}
+      \smallskip
+      \par
+      \group_end:
+      \begingroup
+      #4
+      \endgroup
+    \end{pabox}
+  }
+  {}
+}
+{}
+
+% 引用命令
+\NewDocumentCommand \myref { m o }
+{ 详见 第 ~\pageref{#1}~ 页 \IfNoValueTF{#2}{#1}{#2} }
 
 \endinput
