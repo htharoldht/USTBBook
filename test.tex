@@ -2,10 +2,19 @@
 
 \usepackage{zhlipsum}
 
+\ustbbooksetup {
+  global/reset-chapter = true,
+}
+
 \begin{document}
 
 \frontmatter
 
+\setcounter{page}{0}
+\cleardoublepage
+\pagenumbering{Roman}
+
+\addcontentsline{toc}{chapter}{目录}
 \tableofcontents
 
 \mainmatter
@@ -48,7 +57,8 @@
 \subsection{理论模型}
 \zhlipsum[9]
 
-% \part{方法与实验}
+\part{方法与实验}
+\ToggleSectionStyle
 
 \chapter{研究方法}
 \zhlipsum[10]
@@ -74,10 +84,14 @@
 \subsection{定性分析}
 \zhlipsum[17]
 
-\chapter{实验结果与分析}
-\zhlipsum[14]
+\part{结论与评价}
+\ToggleSectionStyle
 
 \chapter{实验结果与分析}
+\section{实验结果与分析I}
+\zhlipsum[14]
+
+\section{实验结果与分析II}
 \zhlipsum[14]
 
 \chapter{实验结果与分析}
