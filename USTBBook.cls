@@ -469,7 +469,7 @@
 }
 
 % 默认使用样式 A
-\AtBeginDocument { \__my_section_style_a: }
+\AtEndPreamble { \__my_section_style_a: }
 
 % ========== 选修节接口 ========== %
 %       会在标题前加上"*"
@@ -576,17 +576,6 @@
   fillin/text-color = blue,
   solution/text-color = blue,
   textfigure/fig-pos = right,
-}
-
-% 选修内容对应的题目
-\NewDocumentEnvironment { question* } { O{} +b }
-{
-  \group_begin:
-  \__examzh_question_begin:nn {label={*\arabic*.},#1}{#2}
-}
-{
-  \__examzh_question_end:nn {#1}{#2}
-  \group_end:
 }
 
 % 解析环境
@@ -852,5 +841,87 @@
 \DeclareTranslation{English}{changelog-Unreleased}{即将发布}
 \DeclareTranslation{English}{changelog-Yanked}{警醒}
 %%%%%%%%%%%%%%%%%%%%%%%%%%% 更新日志 %%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%% 题目编号 %%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% 定义颜色
+\definecolor{sintefblue}{RGB}{38, 113, 142}
+
+% 通用 itemlabel 构造器
+\cs_new:Npn \__itemlabel:n #1 {
+  \tikz[baseline=(char.base)]{
+    \node [
+      shape = rectangle,
+      fill = sintefblue,
+      rounded~corners = 2pt,
+      inner~sep = 2pt,
+      minimum~size = 12pt
+    ] (char) {\color{white}{#1}};
+  }
+}
+
+% 定义 boxednumber 宏，接受编号作为参数
+\NewDocumentCommand \boxednumber { m } {
+  \__itemlabel:n {#1}
+}
+
+% enumitem 中使用样式的包装命令
+\NewDocumentCommand \boxedlabel {} {
+  \boxednumber{\arabic*}
+}
+
+% 默认题号样式
+\cs_new_protected:Npn \__my_question_style_a: {
+  \keys_set:nn { exam-zh / question } {
+    label = \arabic*.,
+  }
+}
+
+% 题号样式 B
+\cs_new_protected:Npn \__my_question_style_b: {
+  \keys_set:nn { exam-zh / question } {
+    % question/label=\protect\itemlabelf\arabic*},
+    label = \boxednumber{\arabic*},
+  }
+}
+
+% 定义布尔变量控制样式状态
+\bool_new:N \l__my_question_style_bool
+\bool_set_true:N \l__my_question_style_bool
+
+% 切换命令（不使用 renewcommand）
+\NewDocumentCommand{\ToggleQuestionStyle}{}{
+  \bool_if:NTF \l__my_question_style_bool
+  {
+    \__my_question_style_b:
+    \bool_set_false:N \l__my_question_style_bool
+  }
+  {
+    \__my_question_style_a:
+    \bool_set_true:N \l__my_question_style_bool
+  }
+}
+
+% 使用默认样式
+\AtEndPreamble{ \__my_question_style_a: }
+
+% 选修内容对应的题目
+\NewDocumentEnvironment { question* } { O{} +b }
+{
+  \group_begin:
+  \bool_if:NTF \l__my_question_style_bool
+  {
+    \__examzh_question_begin:nn {label={*\arabic*.}, #1}{#2}
+  }
+  {
+    \__examzh_question_begin:nn {label={\boxednumber{*\arabic*}}, #1}{#2}
+  }
+}
+{
+  \__examzh_question_end:nn {#1}{#2}
+  \group_end:
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%% 题目编号 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \endinput
