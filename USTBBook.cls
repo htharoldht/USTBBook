@@ -12,22 +12,22 @@
 \ProvidesExplPackage {USTBBook} {2025/07/01} {v0.1.0}{LaTeX Book template for USTB}
 
 % 检查 LaTeX2e kernel 版本
-\msg_new:nnn { USTBBook } { latex-too-old }
+\msg_new:nnn { ustb-book } { latex-too-old }
 { TeX~ Live~ 2020~ or~ later~ version~ is~ required~ to~ compile~ this~ document. }
 \@ifl@t@r \fmtversion { 2020/02/02 }
 { }
-{ \msg_fatal:nn { USTBBook } { latex-too-old } }
+{ \msg_fatal:nn { ustb-book } { latex-too-old } }
 
 % 检查编译引擎，要求使用 XeLaTeX。
-\msg_new:nnn { USTBBook } { incompatible-engine }
+\msg_new:nnn { ustb-book } { incompatible-engine }
 { XeLaTeX~ is~ required~ to~ compile~ this~ document. }
 
 \sys_if_engine_xetex:F
-{ \msg_fatal:nn { USTBBook } { incompatible-engine } }
+{ \msg_fatal:nn { ustb-book } { incompatible-engine } }
 
 % 使用 l3keys 定义 \examsetup 配置命令
-\NewDocumentCommand \ustbsetup { m }
-{ \keys_set:nn { USTBBook } {#1} }
+\NewDocumentCommand \ustbbooksetup { m }
+{ \keys_set:nn { ustb-book } {#1} }
 
 % 加载文档类和宏包
 
@@ -52,13 +52,13 @@
 \LoadClass { ctexbook }
 
 % 要求 ctex v2.4.9 2017-04-01 或更高的版本。
-\msg_new:nnn { USTBBook } { require-package-version }
+\msg_new:nnn { ustb-book } { require-package-version }
 { The~ package~ "#1"~ is~ required. }
 
 \@ifclasslater { ctexbook } { 2017/04/01 }
 { }
 {
-  \msg_fatal:nnn { USTBBook } { require-package-version }
+  \msg_fatal:nnn { ustb-book } { require-package-version }
   { ctex~ v2.4.9~ 2017-04-01 }
 }
 
@@ -70,6 +70,10 @@
   \AtBeginDocument{\let\sim=\savedsim}
 }
 
+% 处理 Unicode 数学符号警告
+\PassOptionsToPackage {
+  warnings-off={mathtools-colon,mathtools-overbracket}
+} { unicode-math }
 
 % 建议在模板开始处载入全部宏包，不要轻易改变加载顺序。
 \RequirePackage { etoolbox }
@@ -79,6 +83,7 @@
   vmargin = { 25mm, 25mm },
   headheight = 15pt,
 ] { geometry }
+\RequirePackage { hyperref }
 \RequirePackage { fontspec }
 \RequirePackage { xeCJK }
 \RequirePackage { xeCJKfntef }
@@ -100,27 +105,17 @@
 \RequirePackage { exam-zh-textfigure }
 \RequirePackage { exam-zh-math }
 
-% 页眉页脚设置
-\pagestyle{fancy}
-\renewcommand\headrulewidth{0pt}
+%%%%%%%%%%%%%%%%%%%%%%%%%%% 页眉页脚 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 \fancyhf{}
-\fancyfoot[RO,LE]{\sffamily \zihao{5} {\thepage}}
+\fancyfoot[RO, LE]{\sffamily \zihao{5} {\thepage}}
 
-\AtEndPreamble
-{
-  \RequirePackage { hyperref }
-  \hypersetup
-  {
-    bookmarksnumbered = true,
-    colorlinks        = true,
-    linkcolor         = black,
-    urlcolor          = black,
-    citecolor         = black,
-    filecolor         = black,
-    psdextra          = true,
-    unicode           = true
-  }
+\renewcommand\headrulewidth{0pt}
+
+% 页眉页脚设置
+\AtEndPreamble {
+  \pagestyle{fancy}
 }
+%%%%%%%%%%%%%%%%%%%%%%%%%%% 页眉页脚 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % 生成函数变体
 \cs_generate_variant:Nn \tl_map_inline:nn { xn }
@@ -128,9 +123,9 @@
 % 标点处理
 \tl_const:Nn \c__ustbbook_fwid_full_stop_tl { ^^^^ff0e }
 
-\keys_define:nn { USTBBook }
-{ style .meta:nn = { USTBBook / style } {#1} }
-\keys_define:nn { USTBBook / style }
+\keys_define:nn { ustb-book }
+{ style .meta:nn = { ustb-book / style } {#1} }
+\keys_define:nn { ustb-book / style }
 {
   fullwidth-stop .choice:,
   fullwidth-stop .value_required:n = true,
@@ -146,7 +141,7 @@
   \char_set_catcode_active:N ^^^^3002
 }
 
-\keys_set:nn { USTBBook / style }
+\keys_set:nn { ustb-book / style }
 {
   fullwidth-stop = false
 }
@@ -222,7 +217,7 @@
 }
 { \__ustbbook_define_fn_style:nn #1 }
 \tl_new:N \l__ustbbook_fn_style_tl
-\keys_define:nn { USTBBook / style }
+\keys_define:nn { ustb-book / style }
 {
   footnote-style .choices:nn =
     {
@@ -238,7 +233,7 @@
     },
   footnote-style .value_required:n = true
 }
-\keys_set:nn { USTBBook / style }
+\keys_set:nn { ustb-book / style }
 {
   footnote-style = libertinus
 }
@@ -340,9 +335,15 @@
 % 如果图片没有指定后缀, 依次按下列顺序搜索
 \DeclareGraphicsExtensions{.pdf,.eps,.jpg,.png}
 % 设置图表搜索路径, 可以给图表文件夹取如下名字
-\graphicspath{{figures/}{figure/}{pictures/}{picture/}{fig/}{figs/}{image/}{images/}}
+% 默认图片路径
+\graphicspath{
+  {figures/}{figure/}
+    {pictures/}{picture/}
+    {image/}{images/}
+    {fig/}{figs/}{../figs}{body/figs}
+    {Fig/}{Figs}{../Figs}{body/Figs}
+}
 
-\RequirePackage{xcolor}
 \RequirePackage{tcolorbox}
 \tcbuselibrary{skins,breakable}
 \usetikzlibrary{patterns,shadows}
@@ -367,46 +368,6 @@
 {\hspace{.5em}\titlerule*[5pt]{$\cdot$}\contentspage}
 %%%%%%%%%%%%%%%%%%%%%%%%%%% 目录样式 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%%%%%%%%%%%%%%%%%%%%%%%%%% 几个常用宏 %%%%%%%%%%%%%%%%%%%%%%%%%%%
-% === \cleardoublepage ===
-\cs_if_exist:NT \cleardoublepage {
-  \cs_gset:Npn \cleardoublepage {
-    \clearpage
-    \pagestyle{empty}
-    \int_if_odd:nF {\value{page}} {
-      \hbox{}
-      \newpage
-    }
-    \pagestyle{fancy}
-  }
-}
-
-% === \frontmatter ===
-\cs_if_exist:NT \frontmatter {
-  \cs_gset:Npn \frontmatter {
-    \cleardoublepage
-    \pagestyle{plain}
-    \pagenumbering{roman}
-  }
-}
-
-% === \mainmatter ===
-\cs_if_exist:NT \mainmatter {
-  \cs_gset:Npn \mainmatter {
-    \cleardoublepage
-    \pagenumbering{arabic}
-    \pagestyle{fancy}
-  }
-}
-
-% === \backmatter ===
-\cs_if_exist:NT \backmatter {
-  \cs_gset:Npn \backmatter {
-    \cleardoublepage
-  }
-}
-%%%%%%%%%%%%%%%%%%%%%%%%%% 几个常用宏 %%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%% 章节样式 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newcommand{\partnamebox}[1]{\parbox{\ccwd}{\linespread{1}\selectfont\centering #1}}
 \newcommand{\parttitlebox}[1]{
@@ -416,55 +377,90 @@
   \end{minipage}
 }
 
-\ctexset{
-  secnumdepth = 3,
-  tocdepth = 1,
-  part = {
-      fixskip = true,
-      format = \Huge\sffamily,
-      name = {第,篇},
-      number = \chinese{part},
-      nameformat = \rule{\linewidth}{1bp}\par\bigskip\hfill\sffamily\partnamebox,
-      titleformat = \sffamily\parttitlebox,
-      pagestyle = fancy,
-      aftertitle = {
-          \par\bigskip\nointerlineskip\rule{\linewidth}{2bp}
-          \par\vspace*{\stretch{1}}%
-          \printcontents[parts]{}{0}{\setcounter{tocdepth}{0}}
-          \vspace*{\stretch{2}}
-        },
-      tocline = \CTEXifname{\protect\numberline{{\CTEXthepart}}}{}#2,
-    },
-  chapter = {
-    name = {第,章},
-    format = \centering\huge\sffamily,
-    number = \chinese{chapter},
-    pagestyle = fancy,
-    tocline = \CTEXifname{\protect\numberline{\CTEXthechapter}}{}#2,
-   },
-  section = {
-    name = {第,节},
-    format = \centering\Large\sffamily,
-    number = \chinese{section},
-    tocline = \CTEXifname{\protect\numberline{\CTEXthesection}}{}#2,
-   },
-  subsection = {
-      number = \chinese{subsection},
-      aftername = {、},
-      format = \large\sffamily,
-      indent = 2\ccwd,
-      tocline = \CTEXifname{\protect\numberline{\CTEXthesubsection}}{}#2,
-    },
-  subsubsection = {
-      indent = 2.3\ccwd,
-      number = \arabic{subsubsection},
-      aftername = {.~},
-      format = \normalsize\bfseries,
-    }
-}
-
 % 每节重置题号
 \AddToHook{cmd/section/before}{\int_gset:Nn \g__examzh_question_index_int {1}}
+
+% 默认样式
+\cs_new_protected:Npn \__my_section_style_a: {
+  \ctexset {
+    secnumdepth = 3,
+    tocdepth = 1,
+    part = {
+        fixskip = true,
+        format = \Huge\sffamily,
+        name = {第,篇},
+        number = \chinese{part},
+        nameformat = \rule{\linewidth}{1bp}\par\bigskip\hfill\sffamily\partnamebox,
+        titleformat = \sffamily\parttitlebox,
+        pagestyle = fancy,
+        aftertitle = {
+            \par\bigskip\nointerlineskip\rule{\linewidth}{2bp}
+            \par\vspace*{\stretch{1}}%
+            \printcontents[parts]{}{0}{\setcounter{tocdepth}{0}}
+            \vspace*{\stretch{2}}
+          },
+        tocline = \CTEXifname{\protect\numberline{{\CTEXthepart}}}{}##2,
+      },
+    chapter = {
+      name = {第,章},
+      format = \centering\huge\sffamily,
+      number = \chinese{chapter},
+      pagestyle = fancy,
+      tocline = \CTEXifname{\protect\numberline{\CTEXthechapter}}{}##2,
+     },
+    section = {
+      name = {第,节},
+      format = \centering\LARGE\sffamily,
+      number = \chinese{section},
+      tocline = \CTEXifname{\protect\numberline{\CTEXthesection}}{}##2,
+     },
+    subsection = {
+        number = \chinese{subsection},
+        aftername = {、},
+        format = \large\sffamily,
+        indent = 2\ccwd,
+        tocline = \CTEXifname{\protect\numberline{\CTEXthesubsection}}{}##2,
+      },
+    subsubsection = {
+        indent = 2.3\ccwd,
+        number = \arabic{subsubsection},
+        aftername = {.~},
+        format = \normalsize\bfseries,
+      }
+  }
+}
+
+% 题型样式
+\cs_new_protected:Npn \__my_section_style_b: {
+  \ctexset{
+    section = {
+      format = \raggedright\LARGE\sffamily,
+      number = \chinese{section},
+      name = {题型,},
+      tocline = \CTEXifname{\protect\numberline{\CTEXthesection}}{}##2,
+     }
+  }
+}
+
+% 定义布尔变量控制样式状态
+\bool_new:N \l__my_section_style_bool
+\bool_set_true:N \l__my_section_style_bool
+
+% 切换命令（不使用 renewcommand）
+\NewDocumentCommand{\ToggleSectionStyle}{}{
+  \bool_if:NTF \l__my_section_style_bool
+  {
+    \__my_section_style_b:
+    \bool_set_false:N \l__my_section_style_bool
+  }
+  {
+    \__my_section_style_a:
+    \bool_set_true:N \l__my_section_style_bool
+  }
+}
+
+% 默认使用样式 A
+\AtBeginDocument { \__my_section_style_a: }
 
 % ========== 选修节接口 ========== %
 %       会在标题前加上"*"
@@ -476,7 +472,32 @@
   \section*{*\hspace*{0em}第\chinese{section}节\quad #1}
 }
 % =============================== %
+
+% 定义是否每部分重置章数的选项
+\keys_define:nn { ustb-book / global } {
+  reset-chapter .bool_set:N = \l_ustbbook_reset_chapter_bool,
+  reset-chapter .initial:n  = false,
+}
+
+\keys_define:nn { ustb-book }
+{ global .meta:nn = { ustb-book / global } {#1} }
+
+% 使用低层接口模拟 @addtoreset
+\cs_new_protected:Npn \addtocounterreset #1#2 {
+  \cs_gset:cpn { cl@#1 } { #2 }
+}
+
+\AtEndPreamble {
+  \bool_if:NT \l_ustbbook_reset_chapter_bool
+  {
+    % 如果设置了 reset-chapter，则每个 part 重置 chapter
+    \@addtoreset{chapter}{part}
+  }
+}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%% 章节样式 %%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\setlength{\parindent}{0em}
 
 % 默认的 enumerate 环境
 \setlist[enumerate]{(1), left=\parindent, itemsep=0pt, align=left}
@@ -522,7 +543,6 @@
 \renewcommand{\leq}{\leqslant}
 \renewcommand{\ge}{\geqslant}
 \renewcommand{\geq}{\geqslant}
-\renewcommand\parallel{\mathrel{/\mskip-2.5mu/}}
 
 \everymath{\displaystyle}
 \allowdisplaybreaks
@@ -537,7 +557,7 @@
   symbols/change-dfrac-style = true,
   solution/blank-type = manual,
   solution/show-solution = show-stay,
-  solution/label-content = {\color{blue}{\heiti 解}},
+  solution/label-content = {\color{blue}{\sffamily 解}},
   solution/qedsymbol = {\color{blue}{$\square$}},
   question/show-answer = true,
   problem/show-answer = true,
@@ -563,7 +583,7 @@
 % 解析环境
 \NewDocumentEnvironment{analysis}{ O{} }
 {
-  \begin{solution}[label-content={\color{blue}{\heiti 解析}},blank-type=none,#1]}{
+  \begin{solution}[label-content={\color{blue}{\sffamily 解析}},blank-type=none,#1]}{
   \end{solution}
 }
 
@@ -578,7 +598,7 @@
 % 证明题环境
 \RenewDocumentEnvironment{proof}{ O{} }
 {
-  \begin{solution}[label-content={\color{blue}{\heiti 证明}},blank-type=manual,#1]}{
+  \begin{solution}[label-content={\color{blue}{\sffamily 证明}},blank-type=manual,#1]}{
   \end{solution}
 }
 
@@ -629,5 +649,199 @@
 % 引用命令
 \NewDocumentCommand \myref { m o }
 { 详见 第 ~\pageref{#1}~ 页 \IfNoValueTF{#2}{#1}{#2} }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%% 全局水印 %%%%%%%%%%%%%%%%%%%%%%%%%%%
+\keys_define:nn { ustb-book / global }
+{
+  watermark .tl_set:N = \l__ustbbook_global_watermark,
+}
+\keys_set:nn { ustb-book / global }
+{
+  watermark = {},
+}
+\keys_define:nn { ustb-book }
+{ global .meta:nn = { ustb-book / global } {#1} }
+
+\AtEndPreamble
+{
+  \tl_if_empty:NF { \l__ustbbook_global_watermark }
+  {
+    \RequirePackage{background}
+    \backgroundsetup{
+      scale=1, % 调整大小
+      angle=0, % 调整角度
+      opacity=0.15, % 调整透明度
+      pages=all, % 应用到所有页面
+      position=current~page.center, % 确保在页面正中心
+      contents={
+          \includegraphics[width=0.6\paperwidth, keepaspectratio]{\l__ustbbook_global_watermark}
+        }
+    }
+  }
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%% 全局水印 %%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%% 封面封底 %%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 封面配置
+\keys_define:nn { ustb-book / cover }
+{
+  top      .tl_set:N = \l__ustbbook_cover_top,
+  title    .tl_set:N = \l__ustbbook_cover_title,
+  subtitle .tl_set:N = \l__ustbbook_cover_subtitle,
+  author   .tl_set:N = \l__ustbbook_cover_author,
+  date     .tl_set:N = \l__ustbbook_cover_date,
+  bottom   .tl_set:N = \l__ustbbook_cover_bottom,
+  bgimg    .tl_set:N = \l__ustbbook_cover_bgimg,
+}
+\keys_set:nn { ustb-book / cover }
+{
+  top      = 北京科技大学,
+  title    = 高等数学AI,
+  subtitle = 历年期中试卷合集,
+  author   = 黄腾,
+  date     = \today,
+  bottom   = 假装有出版社,
+  bgimg    = {},
+}
+\keys_define:nn { ustb-book }
+{ cover .meta:nn = { ustb-book / cover } {#1} }
+
+% 定义 makeCover 命令
+\NewDocumentCommand \makeCover { }
+{
+  \newgeometry{hmargin=3.5cm, vmargin=2.5cm, headsep=0.5cm}
+  \pagestyle{empty}
+  \begin{titlepage}
+    \setcounter{page}{0}
+    \tl_if_empty:NF { \l__ustbbook_cover_bgimg }
+    {
+      \begin{tikzpicture}[remember~picture, overlay]
+        \node[opacity=0.2,rotate=30] at ([shift={(-2.0cm, 0)}]current~page.center)
+        {
+          \includegraphics[width=23cm]{\l__ustbbook_cover_bgimg}
+        };
+      \end{tikzpicture}
+    }
+
+    \centering
+
+    \makebox[0.5\textwidth][s]{\huge \bfseries \l__ustbbook_cover_top}
+    \par\addvspace{2.5cm}
+
+    \begin{tcolorbox}[
+      width=0.8\textwidth, height=4cm,
+      halign=center, valign=center,
+      blanker,
+      frame~hidden, boxsep=0pt,
+      borderline~horizontal={2pt}{0pt}{black},
+      hyphenationfix,
+      ]
+      \Huge \bfseries
+      \makebox[0.6\textwidth][s]{\l__ustbbook_cover_title}
+      \par
+      \makebox[0.8\textwidth][s]{\l__ustbbook_cover_subtitle}
+    \end{tcolorbox}
+    \par\addvspace{1.5cm}
+
+    \parbox{0.4\textwidth}{\Large \centering \l__ustbbook_cover_author}
+    \par\addvspace{1cm}
+
+    {\l__ustbbook_cover_date}
+    \par\vfill
+
+    \makebox[0.3\textwidth][s]{\large \l__ustbbook_cover_bottom}
+  \end{titlepage}
+  \restoregeometry
+}
+
+% 定义 makeBackCover 命令
+\NewDocumentCommand \makeBackCover { }
+{
+  \clearpage
+  % 检查当前页码是奇数还是偶数
+  \ifodd\thepage
+    % 如果是奇数页，添加两页空白页
+    \begingroup
+    \pagestyle{empty}
+    \null\newpage
+    \endgroup
+    % 调整 lastpage 页码
+    \addtocounter{page}{-1}
+  \else
+    % 如果是偶数页，添加一页空白页
+    \begingroup
+    \pagestyle{empty}
+    \null\newpage
+    \null\newpage
+    % 调整 lastpage 页码
+    \addtocounter{page}{-2}
+    \endgroup
+  \fi
+}
+
+\RenewDocumentCommand \cleardoublepage { }
+{
+  \clearpage
+  \int_if_odd:nF \c@page
+  { \hbox:n { } \thispagestyle { empty } \newpage }
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%% 封面封底 %%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%% PDF 信息 %%%%%%%%%%%%%%%%%%%%%%%%%%%
+% PDF 配置
+\keys_define:nn { ustb-book / pdf }
+{
+  title    .tl_set:N = \l__ustbbook_pdf_title,
+  author   .tl_set:N = \l__ustbbook_pdf_author,
+  subject  .tl_set:N = \l__ustbbook_pdf_subject,
+  keywords .tl_set:N = \l__ustbbook_pdf_keywords,
+}
+\keys_set:nn { ustb-book / pdf }
+{
+  title    = {},
+  subject  = {},
+  author   = \@author,
+  keywords = {},
+}
+\keys_define:nn { ustb-book }
+{ pdf .meta:nn = { ustb-book / pdf } {#1} }
+
+\hypersetup{
+  bookmarksnumbered = true,
+  colorlinks        = true,
+  linkcolor         = black,
+  urlcolor          = black,
+  citecolor         = black,
+  filecolor         = black,
+  psdextra          = true,
+  unicode           = true,
+  pdfborder         = {0 0 0},
+}
+
+\AtBeginDocument
+{
+  \hypersetup {
+    pdfinfo = {
+        Title    = {\l__ustbbook_pdf_title},
+        Author   = {\l__ustbbook_pdf_author},
+        Subject  = {\l__ustbbook_pdf_subject},
+        Keywords = {\l__ustbbook_pdf_keywords},
+      },
+  }
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%% PDF 信息 %%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%% 更新日志 %%%%%%%%%%%%%%%%%%%%%%%%%%%
+\RequirePackage{changelog, translations}
+\DeclareTranslation{English}{changelog-Added}{新增}
+\DeclareTranslation{English}{changelog-Changed}{修改}
+\DeclareTranslation{English}{changelog-Deprecated}{即将舍弃}
+\DeclareTranslation{English}{changelog-Removed}{移除}
+\DeclareTranslation{English}{changelog-Fixed}{纠错}
+\DeclareTranslation{English}{changelog-Security}{安全}
+\DeclareTranslation{English}{changelog-Miscellaneous}{其他}
+\DeclareTranslation{English}{changelog-Unreleased}{即将发布}
+\DeclareTranslation{English}{changelog-Yanked}{警醒}
+%%%%%%%%%%%%%%%%%%%%%%%%%%% 更新日志 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \endinput
