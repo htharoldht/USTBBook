@@ -96,7 +96,6 @@
 \RequirePackage { pifont }
 \RequirePackage { tabu, booktabs, tabularx }
 \RequirePackage { fontawesome }
-\RequirePackage { ocgx2 }
 
 \RequirePackage { exam-zh-question }
 \RequirePackage { exam-zh-font }
@@ -379,9 +378,6 @@
     \startcontents[parts]
   \end{minipage}
 }
-
-% 每节重置题号
-\AddToHook{cmd/section/before}{\int_gset:Nn \g__examzh_question_index_int {1}}
 
 % 默认样式
 \cs_new_protected:Npn \__my_section_style_a: {
@@ -875,6 +871,8 @@
   \keys_set:nn { exam-zh / question } {
     label = \arabic*.,
   }
+  % 每节重置题号
+  \AddToHook{cmd/section/before}{\int_gset:Nn \g__examzh_question_index_int {1}}
 }
 
 % 题号样式 B
@@ -883,6 +881,8 @@
     % question/label=\protect\itemlabelf\arabic*},
     label = \boxednumber{\arabic*},
   }
+  % 每节重置题号
+  \AddToHook{cmd/subsection/before}{\int_gset:Nn \g__examzh_question_index_int {1}}
 }
 
 % 定义布尔变量控制样式状态
@@ -916,12 +916,40 @@
   {
     \__examzh_question_begin:nn {label={\boxednumber{*\arabic*}}, #1}{#2}
   }
-}
-{
-  \__examzh_question_end:nn {#1}{#2}
-  \group_end:
-}
+  }
+  {
+    \__examzh_question_end:nn {#1}{#2}
+    \group_end:
+  }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%% 题目编号 %%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%% 试题环境 %%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% 定义 Example 接口
+\NewDocumentCommand \Example { +m +m +m +m } {
+  \ustb_example_typeset:nnnn {#1} {#2} {#3} {#4}
+}
+
+% 定义题目元信息 meta
+\NewDocumentCommand \meta { m } {
+  \begingroup
+  (\kaishu \tl_trim_spaces:n {#1}\ignorespacesafterend) \space \ignorespaces
+  % （\kaishu \tl_trim_spaces:n {#1}\ignorespacesafterend）
+  \endgroup
+}
+
+% 核心排版函数
+\cs_new_protected:Npn \ustb_example_typeset:nnnn #1#2#3#4 {
+  \begin{question}
+    \meta{#1} #2
+  \end{question}
+
+  \begin{solution}
+    #4
+  \end{solution}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%% 试题环境 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \endinput
