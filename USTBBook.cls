@@ -418,17 +418,9 @@
       tocline = \CTEXifname{\protect\numberline{\CTEXthesection}}{}##2,
      },
     subsection = {
-        number = \chinese{subsection},
-        aftername = {、},
-        format = \large\sffamily,
-        % indent = 2\ccwd,
-        tocline = \CTEXifname{\protect\numberline{\CTEXthesubsection}}{}##2,
-      },
-    subsubsection = {
-        % indent = 2.3\ccwd,
-        number = \arabic{subsubsection},
-        aftername = {.~},
-        format = \normalsize\bfseries,
+        number = \Alph{subsection},
+        name = {(,)},
+        format = \centering\Large\sffamily,
       }
   }
 }
@@ -441,7 +433,21 @@
       number = \chinese{section},
       name = {题型,},
       tocline = \CTEXifname{\protect\numberline{\CTEXthesection}}{}##2,
-     }
+     },
+    subsection = {
+        number = \chinese{subsection},
+        aftername = {、},
+        name = {},
+        format = \large\sffamily,
+        % indent = 2\ccwd,
+        tocline = \CTEXifname{\protect\numberline{\CTEXthesubsection}}{}##2,
+      },
+    subsubsection = {
+        % indent = 2.3\ccwd,
+        number = \arabic{subsubsection},
+        aftername = {.~},
+        format = \normalsize\bfseries,
+      }
   }
 }
 
