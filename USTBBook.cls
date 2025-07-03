@@ -351,6 +351,9 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%% 目录样式 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 \RequirePackage{titletoc}
 
+% 设置目录标题格式
+\renewcommand{\contentsname}{\centerline{\LARGE 目\quad 录}}
+
 \titlecontents{part}[0pt]{\addvspace{.4\baselineskip} \sffamily \zihao{-4}}
 {\thecontentslabel\quad}{}
 {\hspace{.5em}\titlerule*[5pt]{$\cdot$}\contentspage}
@@ -418,11 +421,11 @@
         number = \chinese{subsection},
         aftername = {、},
         format = \large\sffamily,
-        indent = 2\ccwd,
+        % indent = 2\ccwd,
         tocline = \CTEXifname{\protect\numberline{\CTEXthesubsection}}{}##2,
       },
     subsubsection = {
-        indent = 2.3\ccwd,
+        % indent = 2.3\ccwd,
         number = \arabic{subsubsection},
         aftername = {.~},
         format = \normalsize\bfseries,
