@@ -956,4 +956,25 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%% 试题环境 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%%%%%%%%%%%%%%%%%%%%%% autoref 接口重定义 %%%%%%%%%%%%%%%%%%%%%%
+\def\equationautorefname~#1\null{式(#1)\null~}%
+\def\footnoteautorefname{脚注}%
+\def\itemautorefname~#1\null{第#1项\null}%
+\def\figureautorefname~#1\null{图#1\null~}%
+\def\tableautorefname~#1\null{表#1\null~}%
+\def\partautorefname~#1\null{第#1部分\null}%
+\def\appendixautorefname{附录}%
+\def\chapterautorefname~#1\null{第#1章\null}%
+\def\sectionautorefname~#1\null{第#1节\null}%
+\def\subsectionautorefname~#1\null{第#1小节\null}%
+\def\subsubsectionautorefname~#1\null{第#1小小节\null}%
+\def\paragraphautorefname~#1\null{第#1段\null}%
+\def\subparagraphautorefname~#1\null{第#1小段\null}%
+\def\theoremautorefname{定理}%
+% \def\pageautorefname~#1\null{第~#1~页\null}%
+\def\HyRef@autopageref#1{%
+  \hyperref[{#1}]{第~\pageref*{#1} 页}%
+}
+%%%%%%%%%%%%%%%%%%%%%% autoref 接口重定义 %%%%%%%%%%%%%%%%%%%%%%
+
 \endinput
