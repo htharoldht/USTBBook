@@ -502,7 +502,7 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%% 章节样式 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\setlength{\parindent}{0em}
+% \setlength{\parindent}{0em}
 
 % 默认的 enumerate 环境
 \setlist[enumerate]{(1), left=\parindent, itemsep=0pt, align=left}
@@ -564,6 +564,7 @@
   solution/show-solution = show-stay,
   solution/label-content = {\color{blue}{\sffamily 解}},
   solution/qedsymbol = {\color{blue}{$\square$}},
+  solution/label-indentation = false,
   question/show-answer = true,
   problem/show-answer = true,
   paren/show-answer = true,
@@ -912,31 +913,34 @@
   \bool_if:NTF \l__my_question_style_bool
   {
     \__examzh_question_begin:nn {label={*\arabic*.}, #1}{#2}
-  }
-  {
-    \__examzh_question_begin:nn {label={\boxednumber{*\arabic*}}, #1}{#2}
-  }
-  }
-  {
-    \__examzh_question_end:nn {#1}{#2}
-    \group_end:
-  }
+}
+{
+  \__examzh_question_begin:nn {label={\boxednumber{*\arabic*}}, #1}{#2}
+}
+}
+{
+\__examzh_question_end:nn {#1}{#2}
+\group_end:
+}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%% 题目编号 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%% 试题环境 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% 定义 Example 接口
+% 定义 Example 接口, 已废弃
 \NewDocumentCommand \Example { +m +m +m +m } {
   \ustb_example_typeset:nnnn {#1} {#2} {#3} {#4}
 }
 
 % 定义题目元信息 meta
-\NewDocumentCommand \meta { m } {
-  \begingroup
-  (\kaishu \tl_trim_spaces:n {#1}\ignorespacesafterend) \space \ignorespaces
-  % （\kaishu \tl_trim_spaces:n {#1}\ignorespacesafterend）
-  \endgroup
+\NewDocumentCommand \meta { +m }
+{
+  \tl_if_blank:nF {#1}
+  {
+    \begingroup
+    (\kaishu \tl_trim_spaces:n {#1}\ignorespacesafterend)
+    \endgroup
+  }
 }
 
 % 核心排版函数
