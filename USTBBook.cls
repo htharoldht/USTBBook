@@ -111,7 +111,7 @@
 \renewcommand\headrulewidth{0pt}
 
 % 页眉页脚设置
-\AtEndPreamble {
+\AtBeginDocument {
   \pagestyle{fancy}
 }
 %%%%%%%%%%%%%%%%%%%%%%%%%%% 页眉页脚 %%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -330,6 +330,8 @@
   #1
 }
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%% 图表 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 % 关于图片 graphicx
 % 如果图片没有指定后缀, 依次按下列顺序搜索
 \DeclareGraphicsExtensions{.pdf,.eps,.jpg,.png}
@@ -343,9 +345,40 @@
     {Fig/}{Figs}{../Figs}{body/Figs}
 }
 
+\RequirePackage { subcaption }
+% 图表标题
+\renewcommand \thefigure
+{\ifnum \c@chapter>\z@ \thechapter-\fi \@arabic\c@figure}
+\renewcommand \thetable
+{\ifnum \c@chapter>\z@ \thechapter-\fi \@arabic\c@table}
+% 公式编号
+\numberwithin{equation}{section}
+\renewcommand \theequation
+{\arabic{section}-\arabic{equation}}
+
+\DeclareCaptionFont{song}{\songti}
+% \DeclareCaptionFont{minusfour}{small}
+\captionsetup[figure]{
+  format=hang,        % 标题从第二行开始都有缩进, 应该和 justification=raggedright 的效果一样.
+  labelsep=space,     % 分隔符是一个空格
+  font={song, small}, % 图的字体, 宋体小四
+  position=bottom     % position=bottom, 不代表标题放在下面, 标题仍放在你放\caption的位置.
+}
+\captionsetup[table]{
+  format=hang,        % 标题从第二行开始都有缩进, 应该和 justification=raggedright 的效果一样.
+  labelsep=space,     % 分隔符是一个空格
+  font={song, small}, % 表的字体, 宋体小四
+  position=top        % position=top, 不代表标题放在上面, 标题仍放在你放\caption的位置.
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%% 图表 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \RequirePackage{tcolorbox}
-\tcbuselibrary{skins,breakable}
-\usetikzlibrary{patterns,shadows}
+\tcbuselibrary{skins, breakable}
+\usetikzlibrary{patterns, shadows}
+
+% 脚注编号每页清零
+\RequirePackage { zref-perpage }
+\zmakeperpage { footnote }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%% 目录样式 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 \RequirePackage{titletoc}
@@ -410,12 +443,14 @@
     section = {
       name = {第,节},
       format = \centering\LARGE\sffamily,
+      aftername = {\quad},
       number = \chinese{section},
       tocline = \CTEXifname{\protect\numberline{\CTEXthesection}}{}##2,
      },
     subsection = {
         number = \Alph{subsection},
         name = {(,)},
+        aftername = {\quad},
         format = \centering\Large\sffamily,
       }
   }
@@ -873,6 +908,7 @@
     label = \arabic*.,
   }
   % 每节重置题号
+  \RemoveFromHook{cmd/subsection/before}{\int_gset:Nn \g__examzh_question_index_int {1}}
   \AddToHook{cmd/section/before}{\int_gset:Nn \g__examzh_question_index_int {1}}
 }
 
@@ -883,6 +919,7 @@
     label = \boxednumber{\arabic*},
   }
   % 每节重置题号
+  \RemoveFromHook{cmd/section/before}{\int_gset:Nn \g__examzh_question_index_int {1}}
   \AddToHook{cmd/subsection/before}{\int_gset:Nn \g__examzh_question_index_int {1}}
 }
 
@@ -957,23 +994,23 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%% 试题环境 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%% autoref 接口重定义 %%%%%%%%%%%%%%%%%%%%%%
-\def\equationautorefname~#1\null{式(#1)\null~}%
-\def\footnoteautorefname{脚注}%
-\def\itemautorefname~#1\null{第#1项\null}%
-\def\figureautorefname~#1\null{图#1\null~}%
-\def\tableautorefname~#1\null{表#1\null~}%
-\def\partautorefname~#1\null{第#1部分\null}%
-\def\appendixautorefname{附录}%
-\def\chapterautorefname~#1\null{第#1章\null}%
-\def\sectionautorefname~#1\null{第#1节\null}%
-\def\subsectionautorefname~#1\null{第#1小节\null}%
-\def\subsubsectionautorefname~#1\null{第#1小小节\null}%
-\def\paragraphautorefname~#1\null{第#1段\null}%
-\def\subparagraphautorefname~#1\null{第#1小段\null}%
-\def\theoremautorefname{定理}%
-% \def\pageautorefname~#1\null{第~#1~页\null}%
-\def\HyRef@autopageref#1{%
-  \hyperref[{#1}]{第~\pageref*{#1} 页}%
+\def\equationautorefname~#1\null{式(#1)\null~}
+\def\footnoteautorefname{脚注}
+\def\itemautorefname~#1\null{第#1项\null}
+\def\figureautorefname~#1\null{图#1\null~}
+\def\tableautorefname~#1\null{表#1\null~}
+\def\partautorefname~#1\null{第#1部分\null}
+\def\appendixautorefname{附录}
+\def\chapterautorefname~#1\null{第#1章\null}
+\def\sectionautorefname~#1\null{第#1节\null}
+\def\subsectionautorefname~#1\null{第#1小节\null}
+\def\subsubsectionautorefname~#1\null{第#1小小节\null}
+\def\paragraphautorefname~#1\null{第#1段\null}
+\def\subparagraphautorefname~#1\null{第#1小段\null}
+\def\theoremautorefname{定理}
+% \def\pageautorefname~#1\null{第~#1~页\null}
+\def\HyRef@autopageref#1{
+  \hyperref[{#1}]{第~\pageref*{#1} 页}
 }
 %%%%%%%%%%%%%%%%%%%%%% autoref 接口重定义 %%%%%%%%%%%%%%%%%%%%%%
 
