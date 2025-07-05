@@ -577,6 +577,12 @@
 \NewDocumentCommand \abs { m }
 {\left| #1 \right|}
 
+% 大分式
+\NewDocumentCommand \ddfrac { m m }
+{
+  \frac{\displaystyle #1}{\displaystyle #2}
+}
+
 \renewcommand{\Re}{\operatorname{Re}}
 \renewcommand{\Im}{\operatorname{Im}}
 \renewcommand{\le}{\leqslant}
