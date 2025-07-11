@@ -451,7 +451,7 @@
         number = \Alph{subsection},
         name = {(,)},
         aftername = {\quad},
-        format = \centering\Large\sffamily,
+        format = \centering\Large\bfseries,
       }
   }
 }
