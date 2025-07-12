@@ -505,11 +505,12 @@
 % ========== 选修节接口 ========== %
 %       会在标题前加上"*"
 % 用法: \esection{选修内容标题}
-\cs_new_protected:Npn \esection #1 {
+\NewDocumentCommand{\esection}{ m }{
   \refstepcounter{section}
-  \addcontentsline{toc}{section}{*\hspace*{0em}第\chinese{section}节\quad #1}
+  \addcontentsline{toc}{section}{*\hspace*{0em}\CTEXthesection\quad #1}
   % 与 section 样式一致
-  \section*{*\hspace*{0em}第\chinese{section}节\quad #1}
+  \section*{*\hspace*{0em}\CTEXthesection\quad #1}
+  \sectionmark*{#1}
 }
 % =============================== %
 
@@ -794,32 +795,37 @@
 \NewDocumentCommand \makeBackCover { }
 {
   \clearpage
-  % 检查当前页码是奇数还是偶数
-  \ifodd\thepage
-    % 如果是奇数页，添加两页空白页
-    \begingroup
+  \int_if_odd:nTF { \value{page} }
+  {
+    % 当前页是奇数页，插入一页空白页
+    \group_begin:
     \pagestyle{empty}
-    \null\newpage
-    \endgroup
-    % 调整 lastpage 页码
+    \null \newpage
+    \group_end:
     \addtocounter{page}{-1}
-  \else
-    % 如果是偶数页，添加一页空白页
-    \begingroup
+  }
+  {
+    % 当前页是偶数页，插入两页空白页
+    \group_begin:
     \pagestyle{empty}
-    \null\newpage
-    \null\newpage
-    % 调整 lastpage 页码
+    \null \newpage
+    \null \newpage
+    \group_end:
     \addtocounter{page}{-2}
-    \endgroup
-  \fi
+  }
 }
 
 \RenewDocumentCommand \cleardoublepage { }
 {
   \clearpage
   \int_if_odd:nF \c@page
-  { \hbox:n { } \thispagestyle { empty } \newpage }
+  {
+    \hbox:n {}
+    \thispagestyle { empty }
+    \cs_if_exist:NT \NoSideBarThisPage
+    { \NoSideBarThisPage }
+    \newpage
+  }
 }
 %%%%%%%%%%%%%%%%%%%%%%%%%%% 封面封底 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -1019,5 +1025,150 @@
   \hyperref[{#1}]{第~\pageref*{#1} 页}
 }
 %%%%%%%%%%%%%%%%%%%%%% autoref 接口重定义 %%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%% 侧边栏 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\RequirePackage { afterpage, tikzpagenodes }
+
+% 存储当前的 章/节 标题
+\tl_new:N \__chapter_tl
+\tl_new:N \__section_tl
+
+% 定义新的接口 \chaptermark 和 \sectionmark
+\RenewDocumentCommand \chaptermark { s o m }
+{
+  \IfBooleanTF{#1}
+  {
+    % 星号调用: 前缀 *
+    \markboth{*\hspace*{0em}\CTEXthechapter #2}{}
+    \tl_set:Nn \__chapter_tl {\;* \\[-.5em]\CTEXthechapter \\[1em]#2}
+  }
+  {
+    \IfValueTF{#2}
+    {
+      % 手动调用: 只使用 #2
+      \markboth{#2}{}
+      \tl_set:Nn \__chapter_tl {#2}
+    }
+    {
+      % 普通调用: 编号 + 标题
+      \markboth{\CTEXthechapter #3}{}
+      \tl_set:Nn \__chapter_tl {\CTEXthechapter \\[1em]#3}
+    }
+  }
+}
+
+% 定义新的接口 \sectionmark
+\RenewDocumentCommand \sectionmark { s o m }
+{
+  % s 参数自动转化为布尔量，\booleanTF 结构判断
+  \bool_if:NTF #1
+  {
+    % 星号调用: 前缀 *
+    \markright{*\CTEXthesection #3}
+    \tl_set:Nn \__section_tl {\;* \\[-.5em] \CTEXthesection \\[1em]#3}
+  }
+  {
+    \IfValueTF{#2}
+    {
+      % 手动调用: 只使用 #2
+      \markright{#2}
+      \tl_set:Nn \__section_tl {#2}
+    }
+    {
+      % 普通调用: 编号 + 标题
+      \markright{\CTEXthesection #3}
+      \tl_set:Nn \__section_tl {\CTEXthesection \\[1em]#3}
+    }
+  }
+}
+
+% 语义接口
+\NewDocumentCommand \ManualSectionMark { m } { \sectionmark[#1]{} }
+\NewDocumentCommand \ManualChapterMark { m } { \chaptermark[#1]{} }
+
+% 只在 mainmatter 启用侧栏
+\bool_new:N \g__ustbbook_enable_sidebar_bool
+
+% 本页禁用侧边栏
+\NewDocumentCommand \NoSideBarThisPage{}
+{
+  \NoSideBar
+  \afterpage{ \ustbbook_add_sidebar: }
+}
+
+% 在 \mainmatter 后启用侧栏
+\AddToHook{cmd/mainmatter/after}
+{
+  \bool_gset_true:N \g__ustbbook_enable_sidebar_bool
+}
+% 在 \backmatter 后禁用侧栏
+\AddToHook{cmd/backmatter/after}
+{
+  \bool_gset_false:N \g__ustbbook_enable_sidebar_bool
+}
+
+% 在 part 当页禁用侧栏
+\AddToHook{cmd/part/before}
+{
+  \afterpage{
+    % 本页禁用
+    \NoSideBarThisPage
+  }
+  \if@openright
+    \afterpage{\afterpage{\NoSideBarThisPage}}
+  \fi
+}
+
+% 取消侧边栏
+\NewDocumentCommand \NoSideBar { }
+{
+  \RemoveFromHook{shipout/background} [sidebar]
+}
+
+% 定义侧边栏
+\cs_new_protected:Npn \ustbbook_add_sidebar:
+{
+  % 在 shipout/background 钩子中集成控制逻辑
+  \AddToHook{shipout/background} [sidebar]
+  {
+    \bool_if:NT \g__ustbbook_enable_sidebar_bool
+    {
+      \begin{tikzpicture}[remember~picture, overlay]
+        \int_if_odd:nTF \c@page
+        {
+          % 奇数页: 右侧
+          \path[fill=blue!10]
+          ([xshift=15mm, yshift=70mm]current~page~text~area.east)
+          rectangle
+          ([xshift=35mm, yshift=-20mm]current~page~text~area.east)
+          node[midway] (sidebarbox) {};
+          \node[
+            at=(sidebarbox),
+            anchor=center,
+            text~width=1.5em,
+            inner~sep=2pt,
+            xshift=-4mm,
+          ] { \sffamily \__chapter_tl };
+        }
+        {
+          % 偶数页: 左侧
+          \path[fill=blue!10]
+          ([xshift=-15mm, yshift=70mm]current~page~text~area.west)
+          rectangle
+          ([xshift=-35mm, yshift=-20mm]current~page~text~area.west)
+          node[midway] (sidebarbox) {};
+          \node[
+            at=(sidebarbox),
+            anchor=center,
+            text~width=1.5em,
+            inner~sep=2pt,
+            xshift=6mm,
+          ] { \sffamily \__section_tl };
+        }
+      \end{tikzpicture}
+    }
+  }
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%% 侧边栏 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \endinput
