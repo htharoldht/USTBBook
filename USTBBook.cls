@@ -888,19 +888,16 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%% 题目编号 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% 定义颜色
-\definecolor{sintefblue}{RGB}{38, 113, 142}
-
 % 通用 itemlabel 构造器
 \cs_new:Npn \__itemlabel:n #1 {
   \tikz[baseline=(char.base)]{
     \node [
       shape = rectangle,
-      fill = sintefblue,
+      fill = kejilan,
       rounded~corners = 2pt,
       inner~sep = 2pt,
       minimum~size = 12pt
-    ] (char) {\color{white}{#1}};
+    ] (char) {\color{white} #1 };
   }
 }
 
@@ -1021,8 +1018,8 @@
 \def\subparagraphautorefname~#1\null{第#1小段\null}
 \def\theoremautorefname{定理}
 % \def\pageautorefname~#1\null{第~#1~页\null}
-\def\HyRef@autopageref#1{
-  \hyperref[{#1}]{第~\pageref*{#1} 页}
+\def\HyRef@autopageref~#1{
+\hyperref[{#1}]{第~\pageref*{#1}~页}
 }
 %%%%%%%%%%%%%%%%%%%%%% autoref 接口重定义 %%%%%%%%%%%%%%%%%%%%%%
 
@@ -1092,7 +1089,9 @@
 % 本页禁用侧边栏
 \NewDocumentCommand \NoSideBarThisPage{}
 {
-  \NoSideBar
+  % 清除侧栏
+  \RemoveFromHook{shipout/background} [ustbbook-sidebar]
+  % 下一页起添加侧栏
   \afterpage{ \ustbbook_add_sidebar: }
 }
 
@@ -1119,17 +1118,19 @@
   \fi
 }
 
-% 取消侧边栏
-\NewDocumentCommand \NoSideBar { }
-{
-  \RemoveFromHook{shipout/background} [sidebar]
-}
+% 颜色定义
+
+% 科技蓝
+\definecolor{kejilan}{RGB}{0,116,199}
+% 钢铁红
+\definecolor{gangtiehong}{RGB}{167,26,32}
+% 金属灰
+\definecolor{jinshuhui}{RGB}{179,179,179}
 
 % 定义侧边栏
 \cs_new_protected:Npn \ustbbook_add_sidebar:
 {
-  % 在 shipout/background 钩子中集成控制逻辑
-  \AddToHook{shipout/background} [sidebar]
+  \AddToHook{shipout/background} [ustbbook-sidebar]
   {
     \bool_if:NT \g__ustbbook_enable_sidebar_bool
     {
@@ -1137,38 +1138,123 @@
         \int_if_odd:nTF \c@page
         {
           % 奇数页: 右侧
-          \path[fill=blue!10]
-          ([xshift=15mm, yshift=70mm]current~page~text~area.east)
+          \path[fill=kejilan]
+          ([xshift=15mm, yshift=10cm]current~page~text~area.north~east)
           rectangle
-          ([xshift=35mm, yshift=-20mm]current~page~text~area.east)
+          ([xshift=35mm, yshift=-8cm]current~page~text~area.south~east)
           node[midway] (sidebarbox) {};
           \node[
             at=(sidebarbox),
-            anchor=center,
+            anchor=north,
             text~width=1.5em,
             inner~sep=2pt,
             xshift=-4mm,
-          ] { \sffamily \__chapter_tl };
+            yshift=6.5cm
+          ] { \textcolor{white!10}{\sffamily \__section_tl} };
         }
         {
           % 偶数页: 左侧
-          \path[fill=blue!10]
-          ([xshift=-15mm, yshift=70mm]current~page~text~area.west)
+          \path[fill=kejilan]
+          ([xshift=-15mm, yshift=10cm]current~page~text~area.north~west)
           rectangle
-          ([xshift=-35mm, yshift=-20mm]current~page~text~area.west)
+          ([xshift=-35mm, yshift=-8cm]current~page~text~area.south~west)
           node[midway] (sidebarbox) {};
           \node[
             at=(sidebarbox),
-            anchor=center,
+            anchor=north,
             text~width=1.5em,
             inner~sep=2pt,
             xshift=6mm,
-          ] { \sffamily \__section_tl };
+            yshift=6.5cm
+          ] { \textcolor{white!10}{\sffamily \__chapter_tl} };
         }
       \end{tikzpicture}
     }
   }
 }
 %%%%%%%%%%%%%%%%%%%%%%%%%%% 侧边栏 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%% 难度星级 %%%%%%%%%%%%%%%%%%%%%%%%%%%
+\RequirePackage{ stackengine }
+% % https://tex.stackexchange.com/questions/500717/writing-multiple-dots-in-formation
+% \newcommand*\tokenstars[1]{\ifnum#1>0\relax{\ding{72}}\tokenstars{\the\numexpr#1-1}\fi}
+% \newcommand*\stackedtokenstars[2]{
+%   \stackanchor[1pt]{\tokenstars{#1}}{\tokenstars{#2}}
+% }
+
+% \NewDocumentCommand{\BoxSqueeze}{ m }{%
+%   \hbox_set:Nn \l_tmpa_box { #1 }
+%   \makebox[1.5em][c]{%
+%     \box_scale:Nnn \l_tmpa_box
+%     { 0.6 } % xscale-factor
+%     { 0.6 } % yscale-factor
+%     \box_move_up:nn {1.5pt} {\box_use_drop:N \l_tmpa_box}
+%   }
+% }
+
+% % 题目难度星级
+% \NewDocumentCommand{\levelTag}{ O{3} }{%
+%   \int_case:nn { #1 }{%
+%     {1} {\BoxSqueeze{\tokenstars{1}}}
+%     {2} {\BoxSqueeze{\tokenstars{2}}}
+%     {3} {\BoxSqueeze{\stackedtokenstars{1}{2}}}
+%     {4} {\BoxSqueeze{\stackedtokenstars{2}{2}}}
+%     {5} {\BoxSqueeze{\stackedtokenstars{2}{3}}}
+%   }
+% }
+
+% 递归生成星号（函数风格）
+\cs_new_protected:Npn \__level_tag_tokenstars:n #1
+{
+  \int_compare:nNnTF {#1} > {0}
+    {
+      \ding{72}
+      \__level_tag_tokenstars:n {#1 - 1}
+    }
+    {}
+}
+
+% 上下叠加
+\cs_new_protected:Npn \__level_tag_stacked:nn #1 #2
+{
+  \stackanchor[1pt]
+  { \__level_tag_tokenstars:n {#1} }
+  { \__level_tag_tokenstars:n {#2} }
+}
+
+% 缩放盒子
+\cs_new_protected:Npn \__level_tag_box_squeeze:n #1
+{
+  \hbox_set:Nn \l_tmpa_box { #1 }
+  \makebox[1.5em][c]{%
+    \box_scale:Nnn \l_tmpa_box
+    { 0.6 } % xscale-factor
+    { 0.6 } % yscale-factor
+    \box_move_up:nn {1.5pt} {\box_use_drop:N \l_tmpa_box}
+  }
+}
+
+% 用户接口命令
+\NewDocumentCommand \taskGrade { O{3} }
+{
+  \group_begin:
+  \IfNoValueTF {#1}
+  {
+    % 没提供参数，默认显示 3 星
+    \__level_tag_box_squeeze:n { \__level_tag_stacked:nn {1}{2} }
+  }
+  {
+    \int_case:nn {#1}
+    {
+      {1} { \__level_tag_box_squeeze:n { \__level_tag_tokenstars:n {1} } }
+      {2} { \__level_tag_box_squeeze:n { \__level_tag_tokenstars:n {2} } }
+      {3} { \__level_tag_box_squeeze:n { \__level_tag_stacked:nn {1}{2} } }
+      {4} { \__level_tag_box_squeeze:n { \__level_tag_stacked:nn {2}{2} } }
+      {5} { \__level_tag_box_squeeze:n { \__level_tag_stacked:nn {2}{3} } }
+    }
+  }
+  \group_end:
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%% 难度星级 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \endinput
