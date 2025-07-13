@@ -1030,26 +1030,43 @@
 \tl_new:N \__chapter_tl
 \tl_new:N \__section_tl
 
+% 特殊符号处理
+% 定义函数，仅返回处理后的 token list
+\cs_new:Npn \format_section_title:n #1
+{
+  % 设置并处理 l_tmpa_tl
+  \tl_set:Nn \l_tmpa_tl {#1}
+
+  \tl_replace_all:Nnn \l_tmpa_tl { \quad } { \\[1em] }
+  \tl_replace_all:Nnn \l_tmpa_tl { —— } { \\[-.1em]\:\rotatebox{-90}{——}\\[.5em] }
+  \tl_replace_all:Nnn \l_tmpa_tl { 、 } { \\[-.3em]\;、\\ }
+  \tl_replace_all:Nnn \l_tmpa_tl { （ } { \\\rotatebox{-90}{（}\\ }
+  \tl_replace_all:Nnn \l_tmpa_tl { ） } { \\\rotatebox{-90}{）}\\ }
+
+  % 返回为 token list
+  \l_tmpa_tl
+}
+
 % 定义新的接口 \chaptermark 和 \sectionmark
 \RenewDocumentCommand \chaptermark { s o m }
 {
   \IfBooleanTF{#1}
   {
     % 星号调用: 前缀 *
-    \markboth{*\hspace*{0em}\CTEXthechapter #2}{}
-    \tl_set:Nn \__chapter_tl {\;* \\[-.5em]\CTEXthechapter \\[1em]#2}
+    \markboth{*\hspace*{0em}\CTEXthechapter #3}{}
+    \tl_set:NV \__chapter_tl {\;* \\[-.5em]\CTEXthechapter \\[1em] \format_section_title:n {#3}}
   }
   {
     \IfValueTF{#2}
     {
       % 手动调用: 只使用 #2
       \markboth{#2}{}
-      \tl_set:Nn \__chapter_tl {#2}
+      \tl_set:NV \__chapter_tl {\format_section_title:n {#2}}
     }
     {
       % 普通调用: 编号 + 标题
       \markboth{\CTEXthechapter #3}{}
-      \tl_set:Nn \__chapter_tl {\CTEXthechapter \\[1em]#3}
+      \tl_set:NV \__chapter_tl {\CTEXthechapter \\[1em] \format_section_title:n {#3}}
     }
   }
 }
@@ -1062,19 +1079,19 @@
   {
     % 星号调用: 前缀 *
     \markright{*\CTEXthesection #3}
-    \tl_set:Nn \__section_tl {\;* \\[-.5em] \CTEXthesection \\[1em]#3}
+    \tl_set:Nn \__section_tl {\;* \\[-.5em] \CTEXthesection \\[1em] \format_section_title:n {#3}}
   }
   {
     \IfValueTF{#2}
     {
       % 手动调用: 只使用 #2
       \markright{#2}
-      \tl_set:Nn \__section_tl {#2}
+      \tl_set:Nn \__section_tl {\format_section_title:n {#2}}
     }
     {
       % 普通调用: 编号 + 标题
       \markright{\CTEXthesection #3}
-      \tl_set:Nn \__section_tl {\CTEXthesection \\[1em]#3}
+      \tl_set:NV \__section_tl {\CTEXthesection \\[1em] \format_section_title:n {#3}}
     }
   }
 }
