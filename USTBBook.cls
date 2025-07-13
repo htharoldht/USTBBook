@@ -917,7 +917,7 @@
     label = \arabic*.,
   }
   % 每节重置题号
-  \RemoveFromHook{cmd/subsection/before}{\int_gset:Nn \g__examzh_question_index_int {1}}
+  \RemoveFromHook{cmd/chapter/before}{\int_gset:Nn \g__examzh_question_index_int {1}}
   \AddToHook{cmd/section/before}{\int_gset:Nn \g__examzh_question_index_int {1}}
 }
 
@@ -929,7 +929,7 @@
   }
   % 每节重置题号
   \RemoveFromHook{cmd/section/before}{\int_gset:Nn \g__examzh_question_index_int {1}}
-  \AddToHook{cmd/subsection/before}{\int_gset:Nn \g__examzh_question_index_int {1}}
+  \AddToHook{cmd/chapter/before}{\int_gset:Nn \g__examzh_question_index_int {1}}
 }
 
 % 定义布尔变量控制样式状态
@@ -1176,34 +1176,8 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%% 难度星级 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 \RequirePackage{ stackengine }
-% % https://tex.stackexchange.com/questions/500717/writing-multiple-dots-in-formation
-% \newcommand*\tokenstars[1]{\ifnum#1>0\relax{\ding{72}}\tokenstars{\the\numexpr#1-1}\fi}
-% \newcommand*\stackedtokenstars[2]{
-%   \stackanchor[1pt]{\tokenstars{#1}}{\tokenstars{#2}}
-% }
 
-% \NewDocumentCommand{\BoxSqueeze}{ m }{%
-%   \hbox_set:Nn \l_tmpa_box { #1 }
-%   \makebox[1.5em][c]{%
-%     \box_scale:Nnn \l_tmpa_box
-%     { 0.6 } % xscale-factor
-%     { 0.6 } % yscale-factor
-%     \box_move_up:nn {1.5pt} {\box_use_drop:N \l_tmpa_box}
-%   }
-% }
-
-% % 题目难度星级
-% \NewDocumentCommand{\levelTag}{ O{3} }{%
-%   \int_case:nn { #1 }{%
-%     {1} {\BoxSqueeze{\tokenstars{1}}}
-%     {2} {\BoxSqueeze{\tokenstars{2}}}
-%     {3} {\BoxSqueeze{\stackedtokenstars{1}{2}}}
-%     {4} {\BoxSqueeze{\stackedtokenstars{2}{2}}}
-%     {5} {\BoxSqueeze{\stackedtokenstars{2}{3}}}
-%   }
-% }
-
-% 递归生成星号（函数风格）
+% 递归生成星号
 \cs_new_protected:Npn \__level_tag_tokenstars:n #1
 {
   \int_compare:nNnTF {#1} > {0}
@@ -1235,7 +1209,7 @@
 }
 
 % 用户接口命令
-\NewDocumentCommand \taskGrade { O{3} }
+\NewDocumentCommand \taskGrade { o }
 {
   \group_begin:
   \IfNoValueTF {#1}
@@ -1244,13 +1218,26 @@
     \__level_tag_box_squeeze:n { \__level_tag_stacked:nn {1}{2} }
   }
   {
-    \int_case:nn {#1}
+    % 有参数，但可能是空值
+    \tl_if_blank:nTF {#1}
     {
-      {1} { \__level_tag_box_squeeze:n { \__level_tag_tokenstars:n {1} } }
-      {2} { \__level_tag_box_squeeze:n { \__level_tag_tokenstars:n {2} } }
-      {3} { \__level_tag_box_squeeze:n { \__level_tag_stacked:nn {1}{2} } }
-      {4} { \__level_tag_box_squeeze:n { \__level_tag_stacked:nn {2}{2} } }
-      {5} { \__level_tag_box_squeeze:n { \__level_tag_stacked:nn {2}{3} } }
+      % 空参数 [] → 显示默认 3 星
+      \__level_tag_box_squeeze:n { \__level_tag_stacked:nn {1}{2} }
+    }
+    {
+      % 有效数字参数
+      \int_case:nnF {#1}
+      {
+        {1} { \__level_tag_box_squeeze:n { \__level_tag_tokenstars:n {1} } }
+        {2} { \__level_tag_box_squeeze:n { \__level_tag_tokenstars:n {2} } }
+        {3} { \__level_tag_box_squeeze:n { \__level_tag_stacked:nn {1}{2} } }
+        {4} { \__level_tag_box_squeeze:n { \__level_tag_stacked:nn {2}{2} } }
+        {5} { \__level_tag_box_squeeze:n { \__level_tag_stacked:nn {2}{3} } }
+      }
+      {
+        % fallback：非法数字也显示默认星级
+        \__level_tag_box_squeeze:n { \__level_tag_stacked:nn {1}{2} }
+      }
     }
   }
   \group_end:
