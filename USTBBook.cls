@@ -537,9 +537,6 @@
 }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%% 章节样式 %%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% \setlength{\parindent}{0em}
-
 % 默认的 enumerate 环境
 \setlist[enumerate]{(1), left=\parindent, itemsep=0pt, align=left}
 \newlist{inenum}{enumerate*}{2}
@@ -1260,5 +1257,37 @@
   \group_end:
 }
 %%%%%%%%%%%%%%%%%%%%%%%%%%% 难度星级 %%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%% 首行缩进 %%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 定义布尔变量
+\bool_new:N \l__my_indentfirst_style_bool
+\bool_set_true:N \l__my_indentfirst_style_bool
+
+% 启用首行缩进
+\cs_new_protected:Npn \__my_indentfirst_style_a: {
+  \setlength{\parindent}{2em}
+}
+
+% 禁用首行缩进
+\cs_new_protected:Npn \__my_indentfirst_style_b: {
+  \setlength{\parindent}{0pt}
+}
+
+% 切换命令
+\NewDocumentCommand{ \ToggleIndentFirst }{}{
+  \bool_if:NTF \l__my_indentfirst_style_bool
+  {
+    \__my_indentfirst_style_b:
+    \bool_set_false:N \l__my_indentfirst_style_bool
+  }
+  {
+    \__my_indentfirst_style_a:
+    \bool_set_true:N \l__my_indentfirst_style_bool
+  }
+}
+
+% 默认启用首行缩进
+\AtEndPreamble { \__my_indentfirst_style_a: }
+%%%%%%%%%%%%%%%%%%%%%%%%%%% 首行缩进 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \endinput
