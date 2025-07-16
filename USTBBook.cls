@@ -447,24 +447,24 @@
   \end{minipage}
 }
 
-% % % ----- 定义 pagestyle -----
-% \fancypagestyle{partstyle}{
-%   \fancyhf{}
-%   \renewcommand{\headrulewidth}{0pt}
-%   \begin{tikzpicture}[remember~picture,overlay]
-%     \node[opacity=0.3] at (current~page.center)
-%       {\includegraphics[width=\paperwidth, height=\paperheight]{part-bg}};
-%   \end{tikzpicture}
-% }
+% ----- 定义 pagestyle -----
+\fancypagestyle{partstyle}{
+  \fancyhf{}
+  \renewcommand{\headrulewidth}{0pt}
+  \begin{tikzpicture}[remember~picture,overlay]
+    \node[opacity=0.3] at (current~page.center)
+      {\includegraphics[width=\paperwidth, height=\paperheight]{part-bg}};
+  \end{tikzpicture}
+}
 
-% \fancypagestyle{chapterstyle}{
-%   \fancyhf{}
-%   \renewcommand{\headrulewidth}{0pt}
-%   \begin{tikzpicture}[remember~picture,overlay]
-%     \node[opacity=0.5] at (current~page.north)
-%     {\includegraphics[width=\paperwidth]{chapter-hd}};
-%   \end{tikzpicture}
-% }
+\fancypagestyle{chapterstyle}{
+  \fancyhf{}
+  \renewcommand{\headrulewidth}{0pt}
+  \begin{tikzpicture}[remember~picture,overlay]
+    \node[opacity=0.5] at (current~page.north)
+    {\includegraphics[width=\paperwidth]{chapter-hd}};
+  \end{tikzpicture}
+}
 
 % 默认样式
 \cs_new_protected:Npn \__my_section_style_a: {
@@ -478,7 +478,7 @@
         number = \chinese{part},
         nameformat = \rule{\linewidth}{1bp}\par\bigskip\hfill\sffamily\partnamebox,
         titleformat = \sffamily\parttitlebox,
-        pagestyle = fancy,
+        pagestyle = partstyle,
         aftertitle = {
             \par\bigskip\nointerlineskip\rule{\linewidth}{2bp}
             \par\vspace*{\stretch{1}}
@@ -491,7 +491,7 @@
       name = {第,章},
       format = \centering\huge\sffamily,
       number = \chinese{chapter},
-      pagestyle = fancy,
+      pagestyle = chapterstyle,
       tocline = \CTEXifname{\protect\numberline{\CTEXthechapter}}{}##2,
      },
     section = {
@@ -1142,7 +1142,7 @@
 \NewDocumentCommand \noSideBarThisPage{}
 {
   % 清除侧栏
-  \RemoveFromHook{shipout/background} [ustbbook-sidebar]
+  \RemoveFromHook{shipout/foreground} [ustbbook-sidebar]
   % 下一页起添加侧栏
   \afterpage{ \ustbbook_add_sidebar: }
 }
@@ -1182,7 +1182,7 @@
 % 定义侧边栏
 \cs_new_protected:Npn \ustbbook_add_sidebar:
 {
-  \AddToHook{shipout/background} [ustbbook-sidebar]
+  \AddToHook{shipout/foreground} [ustbbook-sidebar]
   {
     \bool_if:NT \g__ustbbook_enable_sidebar_bool
     {
