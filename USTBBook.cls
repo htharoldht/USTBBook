@@ -482,25 +482,15 @@
   }
 }
 
-% 定义布尔变量控制样式状态
-\bool_new:N \l__my_section_style_bool
-\bool_set_true:N \l__my_section_style_bool
-
-% 切换命令（不使用 renewcommand）
-\NewDocumentCommand{\ToggleSectionStyle}{}{
-  \bool_if:NTF \l__my_section_style_bool
-  {
-    \__my_section_style_b:
-    \bool_set_false:N \l__my_section_style_bool
-  }
-  {
-    \__my_section_style_a:
-    \bool_set_true:N \l__my_section_style_bool
-  }
+% choices 接口绑定样式命令
+\keys_define:nn { ustb-book / global } {
+  section-style .choices:nn = { section, exercise } {
+      \tl_if_eq:nnTF {#1} {section}
+      { \__my_section_style_a: }
+      { \__my_section_style_b: }
+    },
+  section-style .initial:n = section,
 }
-
-% 默认使用样式 A
-\AtEndPreamble { \__my_section_style_a: }
 
 % ========== 选修节接口 ========== %
 %       会在标题前加上"*"
@@ -819,8 +809,8 @@
   {
     \hbox:n {}
     \thispagestyle { empty }
-    \cs_if_exist:NT \NoSideBarThisPage
-    { \NoSideBarThisPage }
+    \cs_if_exist:NT \noSideBarThisPage
+    { \noSideBarThisPage }
     \newpage
   }
 }
@@ -929,36 +919,35 @@
   \AddToHook{cmd/chapter/before}{\int_gset:Nn \g__examzh_question_index_int {1}}
 }
 
-% 定义布尔变量控制样式状态
-\bool_new:N \l__my_question_style_bool
-\bool_set_true:N \l__my_question_style_bool
+% 定义布尔变量控制是否使用 boxednumber
+\bool_new:N \l__my_question_boxed_bool
 
-% 切换命令（不使用 renewcommand）
-\NewDocumentCommand{\ToggleQuestionStyle}{}{
-  \bool_if:NTF \l__my_question_style_bool
-  {
-    \__my_question_style_b:
-    \bool_set_false:N \l__my_question_style_bool
-  }
-  {
-    \__my_question_style_a:
-    \bool_set_true:N \l__my_question_style_bool
-  }
+% choices 接口绑定样式命令
+\keys_define:nn { ustb-book / global } {
+  question-style .choices:nn = { base, boxed } {
+      \tl_if_eq:nnTF {#1} {base}
+      {
+        \__my_question_style_a:
+        \bool_set_false:N \l__my_question_boxed_bool
+      }
+      {
+        \__my_question_style_b:
+        \bool_set_true:N \l__my_question_boxed_bool
+      }
+    },
+  question-style .initial:n = base,
 }
-
-% 使用默认样式
-\AtEndPreamble{ \__my_question_style_a: }
 
 % 选修内容对应的题目
 \NewDocumentEnvironment { question* } { O{} +b }
 {
   \group_begin:
-  \bool_if:NTF \l__my_question_style_bool
+  \bool_if:NTF \l__my_question_boxed_bool
   {
-    \__examzh_question_begin:nn {label={*\arabic*.}, #1}{#2}
+    \__examzh_question_begin:nn {label={\boxednumber{*\arabic*}}, #1}{#2}
 }
 {
-  \__examzh_question_begin:nn {label={\boxednumber{*\arabic*}}, #1}{#2}
+  \__examzh_question_begin:nn {label={*\arabic*.}, #1}{#2}
 }
 }
 {
@@ -969,12 +958,6 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%% 题目编号 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%% 试题环境 %%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% 定义 Example 接口, 已废弃
-\NewDocumentCommand \Example { +m +m +m +m } {
-  \ustb_example_typeset:nnnn {#1} {#2} {#3} {#4}
-}
-
 % 定义题目元信息 meta
 \NewDocumentCommand \meta { +m }
 {
@@ -1094,14 +1077,14 @@
 }
 
 % 语义接口
-\NewDocumentCommand \ManualSectionMark { m } { \sectionmark[#1]{} }
-\NewDocumentCommand \ManualChapterMark { m } { \chaptermark[#1]{} }
+\NewDocumentCommand \manualSectionMark { m } { \sectionmark[#1]{} }
+\NewDocumentCommand \manualChapterMark { m } { \chaptermark[#1]{} }
 
 % 只在 mainmatter 启用侧栏
 \bool_new:N \g__ustbbook_enable_sidebar_bool
 
 % 本页禁用侧边栏
-\NewDocumentCommand \NoSideBarThisPage{}
+\NewDocumentCommand \noSideBarThisPage{}
 {
   % 清除侧栏
   \RemoveFromHook{shipout/background} [ustbbook-sidebar]
@@ -1125,10 +1108,10 @@
 {
   \afterpage{
     % 本页禁用
-    \NoSideBarThisPage
+    \noSideBarThisPage
   }
   \if@openright
-    \afterpage{\afterpage{\NoSideBarThisPage}}
+    \afterpage{\afterpage{\noSideBarThisPage}}
   \fi
 }
 
@@ -1243,10 +1226,10 @@
       \int_case:nnF {#1}
       {
         {1} { \__level_tag_box_squeeze:n { \__level_tag_tokenstars:n {1} } }
-        {2} { \__level_tag_box_squeeze:n { \__level_tag_tokenstars:n {2} } }
-        {3} { \__level_tag_box_squeeze:n { \__level_tag_stacked:nn {1}{2} } }
-        {4} { \__level_tag_box_squeeze:n { \__level_tag_stacked:nn {2}{2} } }
-        {5} { \__level_tag_box_squeeze:n { \__level_tag_stacked:nn {2}{3} } }
+          {2} { \__level_tag_box_squeeze:n { \__level_tag_tokenstars:n {2} } }
+          {3} { \__level_tag_box_squeeze:n { \__level_tag_stacked:nn {1}{2} } }
+          {4} { \__level_tag_box_squeeze:n { \__level_tag_stacked:nn {2}{2} } }
+          {5} { \__level_tag_box_squeeze:n { \__level_tag_stacked:nn {2}{3} } }
       }
       {
         % fallback：非法数字也显示默认星级
@@ -1259,35 +1242,20 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%% 难度星级 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%% 首行缩进 %%%%%%%%%%%%%%%%%%%%%%%%%%%
-% 定义布尔变量
-\bool_new:N \l__my_indentfirst_style_bool
-\bool_set_true:N \l__my_indentfirst_style_bool
-
-% 启用首行缩进
-\cs_new_protected:Npn \__my_indentfirst_style_a: {
-  \setlength{\parindent}{2em}
+% 定义用户接口：缩进配置使用 choices 自动绑定
+\keys_define:nn { ustb-book / global } {
+  indent-first .choices:nn = { true, false } {
+      \tl_if_eq:nnTF {#1} {true}
+      { \setlength{\parindent}{2em} }
+      { \setlength{\parindent}{0pt} }
+    },
+  indent-first .initial:n = true,
 }
 
-% 禁用首行缩进
-\cs_new_protected:Npn \__my_indentfirst_style_b: {
-  \setlength{\parindent}{0pt}
+% 用户命令：简洁调用方式 \indentFirst {true|false}
+\NewDocumentCommand \indentFirst { m } {
+  \keys_set:nn { ustb-book / global } { indent-first = #1 }
 }
-
-% 切换命令
-\NewDocumentCommand{ \ToggleIndentFirst }{}{
-  \bool_if:NTF \l__my_indentfirst_style_bool
-  {
-    \__my_indentfirst_style_b:
-    \bool_set_false:N \l__my_indentfirst_style_bool
-  }
-  {
-    \__my_indentfirst_style_a:
-    \bool_set_true:N \l__my_indentfirst_style_bool
-  }
-}
-
-% 默认启用首行缩进
-\AtEndPreamble { \__my_indentfirst_style_a: }
 %%%%%%%%%%%%%%%%%%%%%%%%%%% 首行缩进 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \endinput

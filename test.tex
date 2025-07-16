@@ -33,9 +33,9 @@
 \zhlipsum[1]
 
 \section*{研究背景与意义}
-\ManualSectionMark{研究背景与意义}
+\manualSectionMark{研究背景与意义}
 
-\ToggleIndentFirst
+\indentFirst{ false }
 
 \zhlipsum[2]
 
@@ -57,8 +57,11 @@
   厘米那么四边形 $ABCD$ 的面积是\fillin[]平方厘米.
 \end{question}
 
+\newpage
+
 \esection{选修内容标题}
-\ToggleIndentFirst
+% 设置为无缩进
+\indentFirst{ true }
 
 \zhlipsum[6-7]
 
@@ -87,7 +90,7 @@
 
 \newpage
 \section*{国外研究现状}
-\ManualSectionMark{国外研究现状}
+\manualSectionMark{国外研究现状}
 
 \subsection{}
 \zhlipsum[4]
@@ -114,8 +117,13 @@
 \zhlipsum[9]
 
 \part{方法与实验}
-\ToggleSectionStyle
-\ToggleQuestionStyle
+
+\ustbbooksetup {
+  global = {
+    section-style  = exercise,
+    question-style = boxed,
+  }
+}
 
 \chapter{研究方法} \label{cha:1}
 
@@ -194,8 +202,12 @@
 \zhlipsum[17]
 
 \part{结论与评价}
-\ToggleSectionStyle
-\ToggleQuestionStyle
+\ustbbooksetup {
+  global = {
+    section-style  = section,
+    question-style = base,
+  }
+}
 
 \chapter{实验结果与分析}
 \section{实验结果与分析I}
