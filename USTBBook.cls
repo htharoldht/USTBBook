@@ -384,23 +384,58 @@
 \RequirePackage{titletoc}
 
 % 设置目录标题格式
-\renewcommand{\contentsname}{\centerline{\LARGE 目\quad 录}}
+\renewcommand{\contentsname}{\centering \huge 目\quad 录}
 
-\titlecontents{part}[0pt]{\addvspace{.4\baselineskip} \sffamily \zihao{-4}}
-{\thecontentslabel\quad}{}
-{\hspace{.5em}\titlerule*[5pt]{$\cdot$}\contentspage}
+% \titlecontents{part}[0pt]{\addvspace{.4\baselineskip} \sffamily \zihao{-4}}
+% {\thecontentslabel\quad}{}
+% {\hspace{.5em}\titlerule*[5pt]{$\cdot$}\contentspage}
 
-\titlecontents{chapter}[2.3em]{\addvspace{0.25\baselineskip} \sffamily \zihao{-4}}
-{\thecontentslabel\quad}{}
-{\hspace{.5em}\titlerule*[5pt]{$\cdot$}\contentspage}
+% \titlecontents{chapter}[2.3em]{\addvspace{0.25\baselineskip} \sffamily \zihao{-4}}
+% {\thecontentslabel\quad}{}
+% {\hspace{.5em}\titlerule*[5pt]{$\cdot$}\contentspage}
 
-\titlecontents{section}[4.6em]{\zihao{-4}}
+\titlecontents{section}[3.7em]{\zihao{-4}}
 {\thecontentslabel\quad}{}
 {\hspace{.5em}\titlerule*[5pt]{$\cdot$}\contentspage}
 
 \titlecontents{subsection}[6.9em]{\zihao{-4}}
 {\thecontentslabel、}{}
 {\hspace{.5em}\titlerule*[5pt]{$\cdot$}\contentspage}
+
+% from https://ask.latexstudio.net/ask/question/8242.html
+% 定义带样式的环境
+\newtcolorbox{mtoc}[1][]{tocs, #1}
+
+\tcbset{
+  tocs/.style={
+    nobeforeafter,
+    colframe=white,colupper=white,
+    frame~hidden,% width = \textwidth,
+    top=1pt,bottom=1pt,right=0mm,
+    % before~skip~balanced=0em,after~skip~balanced=0em,
+    arc=0pt,outer~arc=0pt,
+    bicolor,sidebyside,boxrule=0pt,
+    sidebyside~align=center,halign=center,halign~lower=left,
+    lefthand~width=3em,
+    % fuzzy~shadow = {0pt}{-2pt}{-0.5pt}{0.5pt}{gray}
+  }
+}
+
+\NewDocumentCommand \boxedd { O{ kejilan } m }
+{
+  \begin{mtoc}[colback=#1, colbacklower=#1!20]
+    \thecontentslabel\tcblower #2 \hfill \thecontentspage
+  \end{mtoc}
+}
+
+\titlecontents{part}[0mm]{\addvspace{0.4\baselineskip} \sffamily \zihao{-4}}
+{\boxedd[gangtiehong]}{\boxedd[gangtiehong]}
+{}
+
+\titlecontents{chapter}[0mm]{\addvspace{0.25\baselineskip} \sffamily \zihao{-4}}
+{\boxedd}{\boxedd}
+{}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%% 目录样式 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%% 章节样式 %%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -412,6 +447,25 @@
   \end{minipage}
 }
 
+% % % ----- 定义 pagestyle -----
+% \fancypagestyle{partstyle}{
+%   \fancyhf{}
+%   \renewcommand{\headrulewidth}{0pt}
+%   \begin{tikzpicture}[remember~picture,overlay]
+%     \node[opacity=0.3] at (current~page.center)
+%       {\includegraphics[width=\paperwidth, height=\paperheight]{part-bg}};
+%   \end{tikzpicture}
+% }
+
+% \fancypagestyle{chapterstyle}{
+%   \fancyhf{}
+%   \renewcommand{\headrulewidth}{0pt}
+%   \begin{tikzpicture}[remember~picture,overlay]
+%     \node[opacity=0.5] at (current~page.north)
+%     {\includegraphics[width=\paperwidth]{chapter-hd}};
+%   \end{tikzpicture}
+% }
+
 % 默认样式
 \cs_new_protected:Npn \__my_section_style_a: {
   \ctexset {
@@ -419,7 +473,7 @@
     tocdepth = 1,
     part = {
         fixskip = true,
-        format = \Huge\sffamily,
+        format = \huge\sffamily,
         name = {第,篇},
         number = \chinese{part},
         nameformat = \rule{\linewidth}{1bp}\par\bigskip\hfill\sffamily\partnamebox,
@@ -427,7 +481,7 @@
         pagestyle = fancy,
         aftertitle = {
             \par\bigskip\nointerlineskip\rule{\linewidth}{2bp}
-            \par\vspace*{\stretch{1}}%
+            \par\vspace*{\stretch{1}}
             \printcontents[parts]{}{0}{\setcounter{tocdepth}{0}}
             \vspace*{\stretch{2}}
           },
@@ -442,7 +496,7 @@
      },
     section = {
       name = {第,节},
-      format = \centering\LARGE\sffamily,
+      format = \centering\Large\sffamily,
       aftername = {\quad},
       number = \chinese{section},
       tocline = \CTEXifname{\protect\numberline{\CTEXthesection}}{}##2,
@@ -451,7 +505,7 @@
         number = \Alph{subsection},
         name = {(,)},
         aftername = {\quad},
-        format = \centering\Large\bfseries,
+        format = \centering\large\bfseries,
       }
   }
 }
@@ -460,7 +514,7 @@
 \cs_new_protected:Npn \__my_section_style_b: {
   \ctexset{
     section = {
-      format = \raggedright\LARGE\sffamily,
+      format = \raggedright\Large\sffamily,
       number = \chinese{section},
       name = {题型,},
       tocline = \CTEXifname{\protect\numberline{\CTEXthesection}}{}##2,
@@ -495,9 +549,10 @@
 % ========== 选修节接口 ========== %
 %       会在标题前加上"*"
 % 用法: \esection{选修内容标题}
-\NewDocumentCommand{\esection}{ m }{
+\NewDocumentCommand{\esection}{ m }
+{
   \refstepcounter{section}
-  \addcontentsline{toc}{section}{*\hspace*{0em}\CTEXthesection\quad #1}
+  \addcontentsline{toc}{section}{\makebox[0pt][r]{*}\CTEXthesection\quad #1}
   % 与 section 样式一致
   \section*{*\hspace*{0em}\CTEXthesection\quad #1}
   \sectionmark*{#1}
