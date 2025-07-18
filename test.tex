@@ -6,6 +6,12 @@
   global/reset-chapter = true,
 }
 
+\ctexset{
+  section = {
+    titleformat = \sectiontitleformat,
+  }
+}
+
 \begin{document}
 
 \makeCover
@@ -18,6 +24,7 @@
 \pagenumbering{Roman}
 
 \addcontentsline{toc}{chapter}{目录}
+
 \tableofcontents
 
 \mainmatter
@@ -27,8 +34,10 @@
 \chapter{绪论}
 
 \begin{flushright}
-  \ding{43} 习题见 \autopageref{cha:1}
+  \faHandPointRight 习题见 \autopageref{cha:1}
 \end{flushright}
+
+\section{国内外研究现状}
 
 \zhlipsum[1]
 
@@ -57,10 +66,12 @@
   厘米那么四边形 $ABCD$ 的面积是\fillin[]平方厘米.
 \end{question}
 
+\zhlipsum[6-7]
+
 \newpage
 
 \esection{选修内容标题}
-% 设置为无缩进
+% 设置为缩进
 \indentFirst{ true }
 
 \zhlipsum[6-7]
@@ -98,7 +109,8 @@
 \subsection{}
 \zhlipsum[5]
 
-\chapter{绪论}
+\setcounter{chapter}{10}
+\chapter{一个很长很长很长很长很长很长很长很长很长很长很长很长很长的标题}
 \zhlipsum[1]
 
 \chapter{隐函数及由参数方程确定的函数的导数}
@@ -120,9 +132,9 @@
 
 \ustbbooksetup {
   global = {
-    section-style  = exercise,
-    question-style = boxed,
-  }
+      section-style  = exercise,
+      question-style = boxed,
+    }
 }
 
 \chapter{研究方法} \label{cha:1}
@@ -196,21 +208,26 @@
 \end{question*}
 
 \subsection{定量分析}
+
 \zhlipsum[16]
 
 \subsection{定性分析}
+
 \zhlipsum[17]
 
 \part{结论与评价}
+
 \ustbbooksetup {
   global = {
     section-style  = section,
     question-style = base,
-  }
+  },
 }
 
 \chapter{实验结果与分析}
+
 \section{实验结果与分析I}
+
 \zhlipsum[14]
 
 \section{实验结果与分析II}

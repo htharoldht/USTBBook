@@ -91,11 +91,9 @@
 \RequirePackage { lastpage }
 \RequirePackage { amsmath, mathtools }
 \RequirePackage [ shortlabels, inline ] { enumitem }
-\RequirePackage { titlesec }
 \RequirePackage { varwidth }
-\RequirePackage { pifont }
 \RequirePackage { tabu, booktabs, tabularx }
-\RequirePackage { fontawesome }
+\RequirePackage { fontawesome5 }
 
 \RequirePackage { exam-zh-question }
 \RequirePackage { exam-zh-font }
@@ -106,7 +104,8 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%% 页眉页脚 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 \fancyhf{}
-\fancyfoot[RO, LE]{\sffamily \zihao{5} {\thepage}}
+% \fancyfoot[RO, LE]{\sffamily \zihao{5} {\thepage}}
+\fancyfoot[RO, LE]{\colorbox{kejilan}{\textcolor{white}{\sffamily \zihao{-5} \thepage}}}
 
 \renewcommand\headrulewidth{0pt}
 
@@ -323,12 +322,6 @@
   }
   { \int_use:N #1 }
 }
-\cs_set:Npn \@makefntext #1
-{
-  \mode_leave_vertical:
-  \hbox_to_wd:nn { 1.5 em } { \@thefnmark \hfil }
-  #1
-}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%% 图表 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -374,7 +367,7 @@
 
 \RequirePackage{tcolorbox}
 \tcbuselibrary{skins, breakable}
-\usetikzlibrary{patterns, shadows}
+\usetikzlibrary{patterns, shadows, fit}
 
 % 脚注编号每页清零
 \RequirePackage { zref-perpage }
@@ -384,7 +377,7 @@
 \RequirePackage{titletoc}
 
 % 设置目录标题格式
-\renewcommand{\contentsname}{\centering \huge 目\quad 录}
+\renewcommand{\contentsname}{目\quad 录}
 
 % \titlecontents{part}[0pt]{\addvspace{.4\baselineskip} \sffamily \zihao{-4}}
 % {\thecontentslabel\quad}{}
@@ -394,36 +387,37 @@
 % {\thecontentslabel\quad}{}
 % {\hspace{.5em}\titlerule*[5pt]{$\cdot$}\contentspage}
 
-\titlecontents{section}[3.7em]{\zihao{-4}}
+\titlecontents{section}[3.7em]{\zihao{-4}\ttfamily}
 {\thecontentslabel\quad}{}
 {\hspace{.5em}\titlerule*[5pt]{$\cdot$}\contentspage}
 
-\titlecontents{subsection}[6.9em]{\zihao{-4}}
-{\thecontentslabel、}{}
+\titlecontents{subsection}[6.9em]{\zihao{-4}\ttfamily}
+{\thecontentslabel}{}
 {\hspace{.5em}\titlerule*[5pt]{$\cdot$}\contentspage}
 
 % from https://ask.latexstudio.net/ask/question/8242.html
 % 定义带样式的环境
-\newtcolorbox{mtoc}[1][]{tocs, #1}
-
-\tcbset{
-  tocs/.style={
-    nobeforeafter,
-    colframe=white,colupper=white,
-    frame~hidden,% width = \textwidth,
-    top=1pt,bottom=1pt,right=0mm,
-    % before~skip~balanced=0em,after~skip~balanced=0em,
-    arc=0pt,outer~arc=0pt,
-    bicolor,sidebyside,boxrule=0pt,
-    sidebyside~align=center,halign=center,halign~lower=left,
-    lefthand~width=3em,
-    % fuzzy~shadow = {0pt}{-2pt}{-0.5pt}{0.5pt}{gray}
-  }
+\DeclareTColorBox{mtoc}{ O{} }{
+  nobeforeafter,
+  colframe=white, colupper=white,
+  frame~hidden,% width = \textwidth,
+  top=1pt,bottom=1pt,right=0mm,
+  % before~skip~balanced=0em,after~skip~balanced=0em,
+  arc=0pt,outer~arc=0pt,
+  bicolor,sidebyside,boxrule=0pt,
+  sidebyside~align=center,halign=center,halign~lower=left,
+  % fuzzy~shadow = {0pt}{-2pt}{-0.5pt}{0.5pt}{gray},
+  #1
 }
 
+\newlength{\Boxwidth}
 \NewDocumentCommand \boxedd { O{ kejilan } m }
 {
-  \begin{mtoc}[colback=#1, colbacklower=#1!20]
+  \settowidth{\Boxwidth}{\thecontentslabel}
+  \begin{mtoc}[
+      colback=#1, colbacklower=#1!20,
+      lefthand~width=\dimexpr\Boxwidth+.5em\relax,
+    ]
     \thecontentslabel\tcblower #2 \hfill \thecontentspage
   \end{mtoc}
 }
@@ -439,32 +433,198 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%% 目录样式 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%% 章节样式 %%%%%%%%%%%%%%%%%%%%%%%%%%%
-\newcommand{\partnamebox}[1]{\parbox{\ccwd}{\linespread{1}\selectfont\centering #1}}
-\newcommand{\parttitlebox}[1]{
-  \begin{minipage}{\textwidth}
-    {\centering\Huge #1}
-    \startcontents[parts]
-  \end{minipage}
+
+% from https://github.com/Azure1210/elegantbook-magic-revision/blob/145d733a14f966c35be1c3f44677c7871c4f5979/elegentbook-magic-revision/gorgeousnbook.cls#L612
+% \RequirePackage[object=vectorian]{pgfornament}
+\NewDocumentCommand{\parttitleformat}{ m }
+{
+  % 清除边栏内容
+  \tl_gclear:N \__chapter_tl
+  \tl_gclear:N \__section_tl
+  \group_begin:
+  % \par
+  % 本页禁用
+  % \noSideBarThisPage
+  % \if@openright
+  %   \afterpage{\noSideBarThisPage}
+  % \fi
+  % \pgfornament[scale=.3]{72}
+  #1
+  % \pgfornament[scale=.3]{73}
+  % \par \vspace*{-5pt}
+  % \pgfornament[scale=.5]{85}
+  \begin{tcolorbox}[
+      enhanced~jigsaw,
+      breakable,
+      before~skip=40pt,
+      width=.95\textwidth,
+      opacityframe=0.5,opacityback=0.25,opacitybacktitle=0.25,
+      colback=kejilan!20,colframe=kejilan,colbacktitle=kejilan,
+      boxrule=0pt,
+      toprule=1.5pt,
+      bottomrule=1.5pt,
+      top=10pt,
+      arc=0mm,
+      overlay = {
+          \node[rectangle, %opacity=.3,
+            text=white, %drop~shadow={opacity=.3, shadow~xshift=0.1cm},
+            rounded~corners=2pt,
+            inner~sep=2mm,
+            fill=kejilan,
+            anchor=center,
+            font=\sffamily\large,
+          ] at ([yshift=.5mm]frame.north) {本篇目录};
+        }
+    ]
+    \color{black}
+    \normalsize
+    \ttfamily
+    \startcontents
+    \printcontents{l}{0}[1]{}
+    % 仅输出章
+    % \printcontents{l}{0}[0]{}
+  \end{tcolorbox}
+  \group_end:
 }
 
-% ----- 定义 pagestyle -----
-\fancypagestyle{partstyle}{
-  \fancyhf{}
-  \renewcommand{\headrulewidth}{0pt}
-  \begin{tikzpicture}[remember~picture,overlay]
-    \node[opacity=0.3] at (current~page.center)
-      {\includegraphics[width=\paperwidth, height=\paperheight]{part-bg}};
+\NewDocumentCommand \chapternameformat{ m } { }
+
+\NewDocumentCommand \chaptertitleformat{ m }
+{
+  % 清除右边栏内容
+  \tl_gclear:N \__section_tl
+  \begin{tcolorbox}[
+      breakable,
+      center, enhanced, width=.8\textwidth,
+      left=6em,
+      title~empty,
+      boxrule=.5pt, boxsep=.5pt, %arc=2pt,
+      colframe=kejilan,
+      colback=transparent!0,
+      fontupper=\sffamily\Large\bfseries,
+      coltext=kejilan,
+      halign=center, valign=center,
+      overlay={
+          \begin{tcbclipinterior}
+            \CTEXthechapter{
+              \node[
+                fill=kejilan, rounded~corners,
+                minimum~width=6em,
+                minimum~height=\tcb@height,
+                font=\sffamily\Large\bfseries,
+                text=white,
+                anchor=west,
+                xshift=-2pt,
+              ] at (interior.west) {
+                {\CTEXifname{\CTEXthechapter}{}}
+              };
+            }{}
+            \node[xshift=-1em, text=kejilan] at (interior.east) {\faStaylinked};
+          \end{tcbclipinterior}
+        }
+    ]
+    #1
+  \end{tcolorbox}
+  % \begin{tikzpicture}[baseline]
+  %   \node[
+  %     draw=kejilan,
+  %     rounded~corners=4pt,
+  %     font=\sffamily\Large,
+  %     minimum~width=.8\textwidth,
+  %     minimum~height=25pt,
+  %     text=kejilan,
+  %     anchor=center
+  %   ] (chapter) at (0, 0) {\ziju{.2} #1};
+  %   \node[
+  %     xshift=-1em, text=kejilan, font=\normalsize
+  %   ] at (chapter.east) { \faGg };
+  %   \CTEXifname{}{
+  %     \node[
+  %       fill=kejilan, rounded~corners,
+  %       minimum~width=6em, minimum~height=25pt,
+  %       font=\sffamily\Large, text=white
+  %     ] at (chapter.south~west) [anchor=south~west] {};
+  %   }
+  % \end{tikzpicture}
+}
+
+% 下划线
+\NewDocumentCommand{\customunderline}{ O{-1pt} m m }
+{
+  \sbox0{#3}%
+  \ooalign{%
+    \copy0\cr
+    \rule[\dimexpr#1-#2\relax]{\wd0}{#2}
+  }
+}
+
+% name 样式
+\NewDocumentCommand \sectionnameformat { m } {
+  \begin{tikzpicture}[baseline]
+    \node[
+      fill=kejilan,
+      rounded~corners=4pt,
+      font=\sffamily\large\bfseries,
+      minimum~width=4.5em,
+      minimum~height=20pt,
+      text=white,
+      anchor=base~east
+    ] { {\CTEXifname{\CTEXthesection}{}} };
   \end{tikzpicture}
 }
 
-\fancypagestyle{chapterstyle}{
-  \fancyhf{}
-  \renewcommand{\headrulewidth}{0pt}
-  \begin{tikzpicture}[remember~picture,overlay]
-    \node[opacity=0.5] at (current~page.north)
-    {\includegraphics[width=\paperwidth]{chapter-hd}};
+% title 样式
+\NewDocumentCommand \sectiontitleformat { m }
+{
+  \begin{tikzpicture}[baseline]
+    % \node[
+    %   fill=kejilan,
+    %   rounded~corners=4pt,
+    %   font=\sffamily\Large,
+    %   minimum~width=6em,
+    %   minimum~height=20pt,
+    %   text=white,
+    %   anchor=base~east
+    % ] { {\CTEXifname{\CTEXthesection}{}} };
+    \node[
+      text=kejilan,
+      font=\sffamily\large\bfseries,
+      anchor=base~west,
+    ] { \customunderline[-8pt]{1pt}{\hspace*{.5em} #1 \hspace*{.5em}} };
+    % \draw [line~width=2pt, color=kejilan] (textnode.west) -- (textnode.east);
   \end{tikzpicture}
 }
+
+% part = {
+%     fixskip = true,
+%     format = \color{kejilan}\huge\sffamily,
+%     name = {第,篇},
+%     number = \chinese{part},
+%     nameformat = \rule{\linewidth}{1bp}\par\bigskip\hfill\sffamily\partnamebox,
+%     titleformat = \sffamily\parttitlebox,
+%     pagestyle = fancy,
+%     aftertitle = {
+%         \par\bigskip\nointerlineskip\rule{\linewidth}{2bp}
+%         \par\vspace*{\stretch{1}}
+%         \printcontents[parts]{}{0}{\setcounter{tocdepth}{0}}
+%         \vspace*{\stretch{2}}
+%       },
+%     tocline = \CTEXifname{\protect\numberline{{\CTEXthepart}}}{}##2,
+%   },
+% chapter = {
+%   name = {第,章},
+%   format = \color{kejilan}\centering\huge\sffamily,
+%   number = \chinese{chapter},
+%   pagestyle = chapterstyle,
+%   tocline = \CTEXifname{\protect\numberline{\CTEXthechapter}}{}##2,
+%  },
+% section = {
+%   name = {第,节},
+%   format = \color{kejilan}\centering\Large\sffamily,
+%   aftername = {\quad},
+%   number = \chinese{section},
+%   tocline = \CTEXifname{\protect\numberline{\CTEXthesection}}{}##2,
+%  },
 
 % 默认样式
 \cs_new_protected:Npn \__my_section_style_a: {
@@ -472,58 +632,60 @@
     secnumdepth = 3,
     tocdepth = 1,
     part = {
-        fixskip = true,
-        format = \huge\sffamily,
+        titleformat = \color{kejilan}\huge\sffamily\parttitleformat,
+        nameformat  = \color{kejilan}\centering\huge\sffamily,
+        pagestyle   = fancy,
         name = {第,篇},
         number = \chinese{part},
-        nameformat = \rule{\linewidth}{1bp}\par\bigskip\hfill\sffamily\partnamebox,
-        titleformat = \sffamily\parttitlebox,
-        pagestyle = partstyle,
-        aftertitle = {
-            \par\bigskip\nointerlineskip\rule{\linewidth}{2bp}
-            \par\vspace*{\stretch{1}}
-            \printcontents[parts]{}{0}{\setcounter{tocdepth}{0}}
-            \vspace*{\stretch{2}}
-          },
+        beforeskip=20pt,
         tocline = \CTEXifname{\protect\numberline{{\CTEXthepart}}}{}##2,
       },
     chapter = {
+      pagestyle   = fancy,
+      titleformat = \chaptertitleformat,
+      nameformat  = \chapternameformat,
       name = {第,章},
-      format = \centering\huge\sffamily,
+      format = \centering\color{kejilan}\sffamily,
       number = \chinese{chapter},
-      pagestyle = chapterstyle,
       tocline = \CTEXifname{\protect\numberline{\CTEXthechapter}}{}##2,
      },
     section = {
-      name = {第,节},
-      format = \centering\Large\sffamily,
-      aftername = {\quad},
+      format = \centering\large\sffamily\color{kejilan},
       number = \chinese{section},
+      name   = {第,节},
+      titleformat = \sectiontitleformat,
+      nameformat  = \sectionnameformat,
       tocline = \CTEXifname{\protect\numberline{\CTEXthesection}}{}##2,
      },
     subsection = {
         number = \Alph{subsection},
         name = {(,)},
         aftername = {\quad},
-        format = \centering\large\bfseries,
-      }
+        format = \centering\large\bfseries\color{kejilan},
+      },
+    appendix = {
+        name = {附录},
+        number = \Alph{chapter},
+      },
   }
 }
 
 % 题型样式
 \cs_new_protected:Npn \__my_section_style_b: {
-  \ctexset{
+  \ctexset {
     section = {
-      format = \raggedright\Large\sffamily,
+      format = \raggedright\large\sffamily\color{kejilan},
       number = \chinese{section},
       name = {题型,},
+      titleformat = \sectiontitleformat,
+      nameformat  = \sectionnameformat,
       tocline = \CTEXifname{\protect\numberline{\CTEXthesection}}{}##2,
      },
     subsection = {
         number = \chinese{subsection},
         aftername = {、},
         name = {},
-        format = \large\sffamily,
+        format = \large\sffamily\color{kejilan},
         % indent = 2\ccwd,
         tocline = \CTEXifname{\protect\numberline{\CTEXthesubsection}}{}##2,
       },
@@ -536,12 +698,21 @@
   }
 }
 
+% 定义布尔变量控制是否使用 题型模式
+\bool_new:N \l__my_section_exercise_bool
+
 % choices 接口绑定样式命令
 \keys_define:nn { ustb-book / global } {
   section-style .choices:nn = { section, exercise } {
-      \tl_if_eq:nnTF {#1} {section}
-      { \__my_section_style_a: }
-      { \__my_section_style_b: }
+      \tl_if_eq:nnTF {#1} { section }
+      {
+        \__my_section_style_a:
+        \bool_set_false:N \l__my_section_exercise_bool
+      }
+      {
+        \__my_section_style_b:
+        \bool_set_true:N \l__my_section_exercise_bool
+      }
     },
   section-style .initial:n = section,
 }
@@ -551,11 +722,13 @@
 % 用法: \esection{选修内容标题}
 \NewDocumentCommand{\esection}{ m }
 {
-  \refstepcounter{section}
-  \addcontentsline{toc}{section}{\makebox[0pt][r]{*}\CTEXthesection\quad #1}
-  % 与 section 样式一致
-  \section*{*\hspace*{0em}\CTEXthesection\quad #1}
-  \sectionmark*{#1}
+  \group_begin:
+  \bool_if:NTF {\l__my_section_exercise_bool}
+  { \ctexset{ section/name={{\texorpdfstring{\makebox[0pt][r]{${}^*$}}{*}题型},} } }
+{ \ctexset{ section/name={{\texorpdfstring{\makebox[0pt][r]{${}^*$}}{*}第},节} } }
+\section{#1}
+\group_end:
+\sectionmark*{#1}
 }
 % =============================== %
 
@@ -582,11 +755,14 @@
 }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%% 章节样式 %%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%% 列表样式 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 % 默认的 enumerate 环境
 \setlist[enumerate]{(1), left=\parindent, itemsep=0pt, align=left}
 \newlist{inenum}{enumerate*}{2}
 \setlist[inenum]{(1), itemjoin={\quad}}
 
+% 行内列表
 \RequirePackage { tasks }
 \NewTasksEnvironment[
   label=(\arabic*),
@@ -599,6 +775,7 @@
   before-skip=\parsep,
   % resume=true   %% comment this for not to resume
 ]{tabenum}[\item](2)    %% (2) here makes all of them in 2 columns
+%%%%%%%%%%%%%%%%%%%%%%%%%%% 列表样式 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%% 一些数学符号 %%%%%%%%%%%%%%%%%%%%%%%%%%
 \RequirePackage{extarrows}
@@ -712,7 +889,7 @@
   {
     \begin{pabox}[]{\IfNoValueTF{#2}{#1}{#2}}[#3]
       \group_begin:
-      {\color{blue!45!gray} \faMortarBoard~ {\bfseries #1}}
+      {\color{blue!45!gray} \faGraduationCap \space {\bfseries #1}}
       \smallskip
       \par
       \group_end:
@@ -892,6 +1069,8 @@
 
 \hypersetup{
   bookmarksnumbered = true,
+  bookmarksopen     = true,
+  bookmarksdepth    = 3,
   colorlinks        = true,
   linkcolor         = black,
   urlcolor          = black,
@@ -1023,18 +1202,6 @@
     \endgroup
   }
 }
-
-% 核心排版函数
-\cs_new_protected:Npn \ustb_example_typeset:nnnn #1#2#3#4 {
-  \begin{question}
-    \meta{#1} #2
-  \end{question}
-
-  \begin{solution}
-    #4
-  \end{solution}
-}
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%% 试题环境 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%% autoref 接口重定义 %%%%%%%%%%%%%%%%%%%%%%
@@ -1076,13 +1243,13 @@
   \tl_replace_all:Nnn \l_tmpa_tl { —— } { \\[-.1em]\:\rotatebox{-90}{——}\\[.5em] }
   \tl_replace_all:Nnn \l_tmpa_tl { 、 } { \\[-.3em]\;、\\ }
   \tl_replace_all:Nnn \l_tmpa_tl { （ } { \\\rotatebox{-90}{（}\\ }
-  \tl_replace_all:Nnn \l_tmpa_tl { ） } { \\\rotatebox{-90}{）}\\ }
+  \tl_replace_all:Nnn \l_tmpa_tl { ） } { \\[-.7em]\rotatebox{-90}{）}\\ }
 
   % 返回为 token list
   \l_tmpa_tl
 }
 
-% 定义新的接口 \chaptermark 和 \sectionmark
+% 定义新的接口 \chaptermark
 \RenewDocumentCommand \chaptermark { s o m }
 {
   \IfBooleanTF{#1}
@@ -1142,7 +1309,7 @@
 \NewDocumentCommand \noSideBarThisPage{}
 {
   % 清除侧栏
-  \RemoveFromHook{shipout/foreground} [ustbbook-sidebar]
+  \RemoveFromHook{ shipout / background } [ustbbook-sidebar]
   % 下一页起添加侧栏
   \afterpage{ \ustbbook_add_sidebar: }
 }
@@ -1158,18 +1325,6 @@
   \bool_gset_false:N \g__ustbbook_enable_sidebar_bool
 }
 
-% 在 part 当页禁用侧栏
-\AddToHook{cmd/part/before}
-{
-  \afterpage{
-    % 本页禁用
-    \noSideBarThisPage
-  }
-  \if@openright
-    \afterpage{\afterpage{\noSideBarThisPage}}
-  \fi
-}
-
 % 颜色定义
 
 % 科技蓝
@@ -1182,7 +1337,7 @@
 % 定义侧边栏
 \cs_new_protected:Npn \ustbbook_add_sidebar:
 {
-  \AddToHook{shipout/foreground} [ustbbook-sidebar]
+  \AddToHook{ shipout / background } [ustbbook-sidebar]
   {
     \bool_if:NT \g__ustbbook_enable_sidebar_bool
     {
@@ -1234,7 +1389,8 @@
 {
   \int_compare:nNnTF {#1} > {0}
     {
-      \ding{72}
+      % \ding{72}
+      \faStar
       \__level_tag_tokenstars:n {#1 - 1}
     }
     {}
@@ -1254,8 +1410,10 @@
   \hbox_set:Nn \l_tmpa_box { #1 }
   \makebox[1.5em][c]{%
     \box_scale:Nnn \l_tmpa_box
-    { 0.6 } % xscale-factor
-    { 0.6 } % yscale-factor
+    % { 0.6 } % xscale-factor
+    % { 0.6 } % yscale-factor
+    { 0.47 } % xscale-factor
+    { 0.47 } % yscale-factor
     \box_move_up:nn {1.5pt} {\box_use_drop:N \l_tmpa_box}
   }
 }
