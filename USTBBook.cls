@@ -1132,25 +1132,31 @@
   \boxednumber{\arabic*}
 }
 
+% 清理
+\cs_new_protected:Npn \__clear_question_hooks: {
+  \RemoveFromHook{cmd/chapter/before} [reset-per-chapter]
+  \RemoveFromHook{cmd/section/before} [reset-per-section]
+}
+
 % 默认题号样式
 \cs_new_protected:Npn \__my_question_style_a: {
+  \__clear_question_hooks:
   \keys_set:nn { exam-zh / question } {
     label = \arabic*.,
   }
-  % 每节重置题号
-  \RemoveFromHook{cmd/chapter/before}{\int_gset:Nn \g__examzh_question_index_int {1}}
-  \AddToHook{cmd/section/before}{\int_gset:Nn \g__examzh_question_index_int {1}}
+  \AddToHook{cmd/section/before} [reset-per-section]
+  {\int_gset:Nn \g__examzh_question_index_int {1}}
 }
 
 % 题号样式 B
 \cs_new_protected:Npn \__my_question_style_b: {
+  \__clear_question_hooks:
   \keys_set:nn { exam-zh / question } {
     % question/label=\protect\itemlabelf\arabic*},
     label = \boxednumber{\arabic*},
   }
-  % 每节重置题号
-  \RemoveFromHook{cmd/section/before}{\int_gset:Nn \g__examzh_question_index_int {1}}
-  \AddToHook{cmd/chapter/before}{\int_gset:Nn \g__examzh_question_index_int {1}}
+  \AddToHook{cmd/chapter/before} [reset-per-chapter]
+  {\int_gset:Nn \g__examzh_question_index_int {1}}
 }
 
 % 定义布尔变量控制是否使用 boxednumber
