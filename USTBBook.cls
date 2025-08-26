@@ -789,7 +789,7 @@
 \DeclareMathOperator{\sgn}{sgn}
 \DeclareMathOperator{\rot}{\mathbf{rot}}
 \DeclareMathOperator{\grad}{\mathbf{grad}}
-\DeclareMathOperator{\divd}{div}
+\DeclareMathOperator{\divd}{\mathbf{div}}
 \DeclareMathOperator{\ch}{ch}
 \DeclareMathOperator{\sh}{sh}
 \DeclareMathOperator{\arccot}{arccot}
