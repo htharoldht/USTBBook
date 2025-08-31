@@ -767,6 +767,8 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%% 列表样式 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 % 默认的 enumerate 环境
 \setlist[enumerate]{(1), left=\parindent, itemsep=0pt, align=left}
+\setlist[enumerate,2]{label=(\roman*), left=0em, labelsep=-0.5em}
+
 \newlist{inenum}{enumerate*}{2}
 \setlist[inenum]{(1), itemjoin={\quad}}
 

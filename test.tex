@@ -54,7 +54,19 @@
   厘米那么四边形 $ABCD$ 的面积是\fillin[]平方厘米.
 \end{question*}
 
-\newpage
+\begin{enumerate}
+  \item 第一类间断点: 左极限和右极限都存在
+        \begin{enumerate}
+          \item 可去间断点(左极限 $=$ 右极限 $\neq$ 函数值):
+                $\lim _{x \to x_{0}}f(x)=A\neq f(x_{0})$
+          \item 跳跃间断点(左极限 $\neq$ 右极限): $\lim _{x \to x_{0}^{-}}f(x) \neq \lim _{x \to x_{0}^{+}}f(x)$
+        \end{enumerate}
+  \item 第二类间断点: 左极限和右极限至少有一个不存在
+        \begin{enumerate}
+          \item 无穷间断点: $\lim _{x \to x_{0^-}}f(x)=\infty$ 或 $\lim _{x \to x_{0^+}}f(x)=\infty$;
+          \item 振荡间断点: $\lim _{x \to x_{0}}f(x)$ 振荡不存在
+        \end{enumerate}
+\end{enumerate}
 
 \begin{question}
   \taskGrade[2]
@@ -221,9 +233,9 @@
 
 \ustbbooksetup {
   global = {
-    section-style  = section,
-    question-style = base,
-  },
+      section-style  = section,
+      question-style = base,
+    },
 }
 
 \chapter{实验结果与分析}
