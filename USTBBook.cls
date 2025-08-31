@@ -105,7 +105,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%% 页眉页脚 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 \fancyhf{}
 % \fancyfoot[RO, LE]{\sffamily \zihao{5} {\thepage}}
-\fancyfoot[RO, LE]{\colorbox{kejilan}{\textcolor{white}{\sffamily \zihao{-5} \thepage}}}
+\fancyfoot[RO, LE]{\colorbox{gangtiehong}{\textcolor{white}{\sffamily \zihao{-5} \thepage}}}
 
 \renewcommand\headrulewidth{0pt}
 
