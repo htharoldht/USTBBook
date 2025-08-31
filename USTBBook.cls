@@ -322,6 +322,18 @@
   }
   { \int_use:N #1 }
 }
+% 让脚注符号与基线平齐
+\cs_set:Npn \@makefntext #1
+{
+  \mode_leave_vertical:
+  \hbox_to_wd:nn { 1.5 em } { \@thefnmark \hfil }
+  #1
+}
+% 脚注编号每页清零
+\AddToHook{ shipout / before }
+{
+  \global\c@footnote=0
+}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%% 图表 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -368,10 +380,6 @@
 \RequirePackage{tcolorbox}
 \tcbuselibrary{skins, breakable}
 \usetikzlibrary{patterns, shadows, fit}
-
-% 脚注编号每页清零
-\RequirePackage { zref-perpage }
-\zmakeperpage { footnote }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%% 目录样式 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 \RequirePackage{titletoc}
