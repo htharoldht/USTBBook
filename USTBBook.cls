@@ -598,7 +598,7 @@
       text=kejilan,
       font=\sffamily\large\bfseries,
       anchor=base~west,
-    ] { \customunderline[-8pt]{1pt}{\hspace*{.5em} #1 \hspace*{.5em}} };
+    ] { \hspace*{-0.5em} \customunderline[-8pt]{1pt}{\hspace*{.5em} #1 \hspace*{.5em}} };
     % \draw [line~width=2pt, color=kejilan] (textnode.west) -- (textnode.east);
   \end{tikzpicture}
 }
