@@ -766,8 +766,11 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%% 列表样式 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 % 默认的 enumerate 环境
-\setlist[enumerate]{(1), left=\parindent, itemsep=0pt, align=left}
-\setlist[enumerate,2]{label=(\roman*), left=0em, labelsep=-0.5em}
+\setlist[enumerate]{(1), left=\parindent, itemsep=0pt, align=left, parsep=0pt, topsep=0pt}
+\setlist[enumerate,2]{label=(\roman*), left=0em, labelsep=-0.5em, itemsep=0pt, parsep=0pt, topsep=0pt}
+% 默认的 itemize 环境
+\setlist[itemize]{left=\parindent, itemsep=0pt, parsep=0pt, topsep=0pt}
+\setlist[itemize,2]{left=0em, labelsep=-0.5em, itemsep=0pt, parsep=0pt, topsep=0pt}
 
 \newlist{inenum}{enumerate*}{2}
 \setlist[inenum]{(1), itemjoin={\quad}}
@@ -890,6 +893,35 @@
   label=#2,
   % title={\faMortarBoard~ #2},
   #1
+}
+
+% 通用盒子
+\DeclareTColorBox{knowledge}{ O{知识点睛} }{
+  enhanced~jigsaw,
+  breakable,
+  before~skip=40pt,
+  width=\textwidth,
+  opacityframe=0.5,opacityback=0.25,opacitybacktitle=0.25,
+  colback=gangtiehong!20,colframe=gangtiehong,colbacktitle=gangtiehong,
+  boxrule=0pt,
+  toprule=1.5pt,
+  bottomrule=1.5pt,
+  top=15pt,
+  left=0pt,
+  right=0pt,
+  arc=0mm,
+  parbox=true,                % ← 允许正常段落格式
+  before~upper=\setlength{\parindent}{2em}, % ← 每段首行缩进 2em
+  overlay = {
+      \node[rectangle, %opacity=.3,
+        text=white, %drop~shadow={opacity=.3, shadow~xshift=0.1cm},
+        rounded~corners=2pt,
+        inner~sep=2mm,
+        fill=gangtiehong,
+        anchor=center,
+        font=\sffamily\large,
+      ] at ([yshift=.5mm]frame.north) {~#1~};
+    }
 }
 
 % 笔记环境
