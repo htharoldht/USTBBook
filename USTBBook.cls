@@ -899,7 +899,6 @@
 \DeclareTColorBox{knowledge}{ O{知识点睛} }{
   enhanced~jigsaw,
   breakable,
-  before~skip=40pt,
   width=\textwidth,
   opacityframe=0.5,opacityback=0.25,opacitybacktitle=0.25,
   colback=gangtiehong!20,colframe=gangtiehong,colbacktitle=gangtiehong,
@@ -912,7 +911,7 @@
   arc=0mm,
   parbox=true,                % ← 允许正常段落格式
   before~upper=\setlength{\parindent}{2em}, % ← 每段首行缩进 2em
-  overlay = {
+  overlay~unbroken~and~first = {
       \node[rectangle, %opacity=.3,
         text=white, %drop~shadow={opacity=.3, shadow~xshift=0.1cm},
         rounded~corners=2pt,
