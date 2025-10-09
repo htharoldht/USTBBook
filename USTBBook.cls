@@ -1051,6 +1051,14 @@
   \restoregeometry
 }
 
+\RequirePackage{zref-user}
+
+% 添加 RealLastPage 标记
+\AddToHook{cmd/backmatter/before}{
+  % 在正文最后一页打标记
+  \zlabel{RealLastPage}
+}
+
 % 定义 makeBackCover 命令
 \NewDocumentCommand \makeBackCover { }
 {
@@ -1062,7 +1070,6 @@
     \pagestyle{empty}
     \null \newpage
     \group_end:
-    \addtocounter{page}{-1}
   }
   {
     % 当前页是偶数页，插入两页空白页
@@ -1071,7 +1078,6 @@
     \null \newpage
     \null \newpage
     \group_end:
-    \addtocounter{page}{-2}
   }
 }
 
