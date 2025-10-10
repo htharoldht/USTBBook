@@ -1,0 +1,711 @@
+% !TEX root = ../main.tex
+% !TeX program = xelatex
+
+\begin{flushright}
+  \faHandPointRight[regular] 课后习题见 \autopageref{part1:cha:1}
+\end{flushright}
+
+% 设置编号为 0
+\setcounter{section}{-1}
+\section{几大定义和定理}
+
+\begin{knowledge}
+  要求掌握 $\varepsilon-N$, $\varepsilon - \delta$, $\varepsilon - X$, $\delta - M$ 语言的内涵,
+  以及\textbf{单调有界准则}、\textbf{夹逼准则}、\textbf{归结原理},
+  在此基础上,
+  掌握柯西命题（课本 22 页例 2.3）及基本的审敛方法（如课本 23 页例 2.4,
+  习题 1-2 第 8 题、第 15~17 题）.
+
+  无期中、期末考试题,
+  读者可在学完本章重要极限之后练习杂题,
+  以作补充.
+
+  另外,
+  本节其实还包含了\textbf{零点定理}、\textbf{介值定理}, 以及函数的定义域、周期性、奇偶性,
+  以及部分\textbf{概念理解类}等内容.
+\end{knowledge}
+
+\subsection{函数}
+
+\begin{question}
+  \meta{2017 AI 期中·1, \taskGrade[1]}
+  % \textit{知识点:} 函数与极限 / 几大定义和定理
+  函数 $f(x) = \sqrt{\lg \frac{5x-x^2}{4}}$ 的定义域为
+  \fillin[$\left[ 1, 4 \right]$].
+\end{question}
+
+\begin{analysis}
+  $\lg \left(\frac{5x - x^2}{4} \right) >0$,
+  即 $\frac{5x - x^2}{4} \ge 1  \to (x-1)(x-4) \le 0$,
+  即 $1 \leq x \leq 4$.
+\end{analysis}
+
+\begin{question}
+  \meta{2017 AI 期中·10, \taskGrade[2]}
+  % \textit{知识点:} 函数与极限 / 几大定义和定理
+  $\arctan x+\arccot x =$
+  \fillin[$\frac{\pi}{2}$].
+\end{question}
+
+\begin{analysis}
+  【法一】熟知三角函数性质可秒.
+  $-\arctan x + \frac{\pi}{2} = \arccot x$,
+  故 $\arctan x + \arccot x = \frac{\pi}{2}$.
+
+  【法二】记 $f(x) = \arctan x+\arccot x$,
+  显然有 $f'(x) = \frac{1}{1+x^2} - \frac{1}{1+x^2} = 0$,
+  则 $f(x) \equiv C$,
+  代入 $x = 1$ 可知
+  $f(x) \equiv f(1) = \arctan 1+\arccot 1 = \frac{\pi}{4} + \frac{\pi}{4} = \frac{\pi}{2}$.
+
+  【法三】令 $\alpha = \arctan x  \to \tan \alpha = x$,
+  $\beta = \arccot x  \to \cot \beta = x$,
+  即知 $\tan \alpha \cot \beta = 1$.
+  $\alpha + \beta = \arctan \left[ \tan \left( \alpha + \beta \right) \right]
+    = \arctan \left( \frac{\tan\alpha + \tan \beta}{1 - \tan\alpha \tan\beta} \right)
+    = \arctan \left( \frac{x + \frac{1}{x}}{1 - 1} \right)
+    = \arctan \infty
+    = \frac{\pi}{2}$.
+\end{analysis}
+
+\begin{question}
+  \meta{2018 AI 期中·11, \taskGrade[2]}
+  % \textit{知识点:} 函数与极限 / 几大定义和定理
+  设 $f(x) $ 是定义在 $\left( -\infty ,+\infty \right) $ 内的任意函数,
+  则 $f(x) -f(-x) $ 是
+  \paren[A]
+  \begin{choices}
+    \item 奇函数
+    \item 偶函数
+    \item 非奇非偶函数
+    \item 非负函数
+  \end{choices}
+\end{question}
+
+\begin{analysis}
+  令 $F(x) = f(x) - f(-x)$,
+  则 $F(-x) = f(-x) - f(x) = -F(x)$,
+  故选 A.
+\end{analysis}
+
+\begin{question}
+  \meta{2018 AI 期中·12, \taskGrade[2]}
+  % \textit{知识点:} 函数与极限 / 几大定义和定理
+  函数 $f(x) = \ln \frac{a-x}{a+x}\left( a>0 \right) $ 是
+  \paren[A]
+  \begin{choices}
+    \item 奇函数
+    \item 偶函数
+    \item 非奇非偶函数
+    \item 奇偶性决定于 $a$ 的值
+  \end{choices}
+\end{question}
+
+\begin{analysis}
+  记 $F(x) = \ln \frac{a-x}{a+x}$,
+  则
+  $F(-x) = \ln \frac{a+x}{a-x} = -\ln \frac{a-x}{a+x} = -F(x)$,
+  故选 A.
+\end{analysis}
+
+\begin{question}
+  \meta{2015 AI 期中·7, \taskGrade[3]}
+  % \textit{知识点:} 函数与极限 / 几大定义和定理
+  已知 $f\left(x-1 \right) = \ln \frac{x}{x-2}$,
+  若 $f\left(g(x) \right) = \ln x$,
+  则 $g(x) =$
+  \fillin[$\frac{x+1}{x-1}$].
+\end{question}
+
+\begin{analysis}
+  令 $t = x-1$,
+  即 $x = t+1$,
+  则 $f(t)= \ln\frac{t+1}{t-1}$,
+  则由题可知
+  \[
+    f(g(x))= \ln\frac{g(x)+1}{g(x)-1}= \ln x
+  \]
+  即 $\frac{g(x)+1}{g(x)-1} = x$,
+  解得 $g(x)= \frac{x+1}{x-1}$.
+\end{analysis}
+
+\subsection{极限}
+
+\begin{question}
+  \meta{2021 AI 期中·11, \taskGrade[2]}
+  % \textit{知识点:} 函数与极限 / 几大定义和定理
+  设数列 $\left\{x_{n}\right\}$ 收敛,
+  则下列极限正确的是
+  \paren[D]
+  \begin{choices}
+    \item $\lim_{n \to \infty} \sin x_{n} = 0$ 时, $\lim_{n \to \infty} x_{n} = 0$
+    \item $\lim_{n \to \infty} x_{n}\left(x_{n}+\sqrt{\left|x_{n}\right|}\right) = 0$ 时, $\lim_{n \to \infty} x_{n} = 0$
+    \item $\lim_{n \to \infty}\left(x_{n}+x_{n}^{2}\right) = 0$ 时, $\lim_{n \to \infty} x_{n} = 0$
+    \item $\lim_{n \to \infty}\left(x_{n}+\sin x_{n}\right) = 0$ 时, $\lim_{n \to \infty} x_{n} = 0$
+  \end{choices}
+\end{question}
+
+\begin{analysis}
+  A 选项应为 $\lim_{n \to \infty} x_{n} = k \pi$ 才对,
+  对于 BC,
+  举反例 $x_n$ 为常数列 $-1$.
+\end{analysis}
+
+\begin{question}
+  \meta{2023 AI 期末·1, \taskGrade[3]}
+  % \textit{知识点:} 函数与极限 / 几大定义和定理
+  下列数列中,
+  发散的是
+  \paren[A]
+  \begin{choices}
+    \item $x_{n}= \sin \left(n+\frac{1}{2}\right) \pi$
+    \item $x_{n}= \sin \left(\sqrt{n^{2}+1} \pi\right)$
+    \item $\sqrt{n^{2}+1}-n$
+    \item $x_{n}= \frac{1}{n} \sin n$
+  \end{choices}
+\end{question}
+
+\begin{analysis}
+  对于 A,
+  由诱导公式可得 $\sin \left(n+\frac{1}{2}\right) \pi = (-1)^n \sin \left( \frac{\pi}{2} \right) = (-1)^n$,
+  故其发散.
+
+  对于 B,
+  由诱导公式可得
+  \[
+    \sin \left( \sqrt{n^{2}+1} \pi\right)
+    = (-1)^n \sin \left( \sqrt{n^{2}+1} - n \right) \pi
+    = (-1)^n \sin \left( \frac{1}{\sqrt{n^{2}+1} + n } \right) \pi
+  \]
+  则 $\lim_{n \to \infty} x_n = \lim_{x \to \infty} (-1)^n \sin \left( \frac{1}{\sqrt{n^{2}+1} + n } \right) \pi = 0$,
+  收敛.
+
+  对于 C,
+  \[
+    \lim_{n \to \infty} \sqrt{n^{2}+1}-n
+    = \lim_{n \to \infty} \sqrt{n^{2}+1}-n
+    = \lim_{x \to \infty} \frac{1}{\sqrt{n^{2}+1}+n}
+    = 0
+  \]
+  即收敛.
+
+  对于 D,
+  有界量乘以无穷小量,
+  极限为 0,
+  故收敛.
+\end{analysis}
+
+\begin{question}
+  \meta{2023 AI 期中·11, \taskGrade[2]}
+  % \textit{知识点:} 函数与极限 / 几大定义和定理
+  设数列 $\left\{x_{n}\right\}$, $\left\{y_{n}\right\}$ 满足 $\lim_{n  \to \infty} x_{n} y_{n} = 0$,
+  下列命题正确的是
+  \paren[D]
+  \begin{choices}
+    \item 若 $\left\{x_{n}\right\}$ 发散,
+    则 $\left\{y_{n}\right\}$ 必发散.
+    \item 若 $\left\{x_{n}\right\}$ 无界,
+    则 $\left\{y_{n}\right\}$ 必有界.
+    \item 若 $\left\{x_{n}\right\}$ 有界,
+    则 $\left\{y_{n}\right\}$ 必为无穷小.
+    \item 若 $\frac{1}{x_{n}}$ 为无穷小,
+    则 $y_{n}$ 必为无穷小.
+  \end{choices}
+\end{question}
+
+\begin{analysis}
+  对于 A,
+  举特例: $x_n = n, y_n= \frac{1}{n^2}$.
+
+  对于 B, $x_n= \left[1-(-1) ^n \right] n$, $y_n= \left[ 1-(-1) ^{n+1} \right] n$,
+  则 $x_ny_n = 0$,
+  但均无界.
+
+  对于 C,
+  举特例: $x_n= \frac{1}{n^2}$, $y_n = n$.
+
+  对于 D,
+  对于 $\lim_{n \to \infty} x_ny_n = 0$,
+  若 $\frac{1}{x_n}$ 为无穷小,
+  则左右同乘 $\frac{1}{x_n}$,
+  有 $\lim_{n \to \infty} x_n y_n\cdot \frac{1}{x_n}= \lim_{n \to \infty} y_n = 0$,
+  故 $y_n$ 也为无穷小.
+\end{analysis}
+
+\begin{question}
+  \meta{2022 AI 期中·11, \taskGrade[2]}
+  % \textit{知识点:} 函数与极限 / 几大定义和定理
+  设数列 $\left\{x_n\right\},\left\{y_n\right\}$,
+  下列关于数列敛散性的命题,
+  正确的是
+  \paren[A]
+  \begin{choices}
+    \item 若 $\left\{x_n\right\}$ 收敛, $\left\{y_n\right\}$ 发散,
+    则 $\left\{x_n+y_n\right\}$ 一定发散.
+    \item 若 $\left\{x_n\right\}$ 收敛, $\left\{y_n\right\}$ 发散,
+    则 $\left\{x_n \cdot y_n\right\}$ 一定发散.
+    \item 若 $\left\{x_n\right\}$ 发散, $\left\{y_n\right\}$ 发散,
+    则 $\left\{x_n+y_n\right\}$ 一定发散.
+    \item 若 $\left\{x_n\right\}$ 发散, $\left\{y_n\right\}$ 发散,
+    则 $\left\{x_n \cdot y_n\right\}$ 一定发散.
+  \end{choices}
+\end{question}
+
+\begin{analysis}
+  对于 B,
+  收敛数列为常数列 $0$,
+  乘积收敛.
+  对于 C,
+  两个互为相反数的发散数列相加为常数列 $0$.
+  对于 D, $(-1)^n$ 与 $(-1)^{n+1}$ 相乘为常数列 $1$,
+  或者 $1, 0, \frac{1}{2}, 0, \cdots$ 与 $0, 1, 0, \frac{1}{2}, 0, \cdots$ 相乘为常数列 $0$.
+\end{analysis}
+
+\begin{notes}[][][green]
+  对于这种模棱两可的定义记住必定的就可以——发散和收敛的加减必定发散,
+  收敛和收敛的加减必定收敛,
+  其余均不一定.
+  常见反例 $0$, $(-1)^n$, $\pm n$, $1, 0, \frac{1}{2}, 0, \cdots$ 与 $0, 1, 0, \frac{1}{2}, 0, \cdots$
+\end{notes}
+
+\begin{question}
+  \meta{2021 AI 期中·15, \taskGrade[4]}
+  % \textit{知识点:} 函数与极限 / 几大定义和定理
+  下列命题正确的是
+  \paren[D]
+  \begin{choices}
+    \item 设 $\lim_{x \to x_{0}} f(x)$ 不存在, $\lim_{x \to x_{0}} g(x)$ 存在,
+    则 $\lim_{x \to x_{0}} f(x) g(x)$ 必存在
+    \item 设 $\lim_{x \to x_{0}} f(x)$ 不存在, $\lim_{x \to x_{0}} g(x)$ 不存在,
+    则 $\lim_{x \to x_{0}} f(x) g(x)$ 必不存在
+    \item 设 $\lim_{x \to x_{0}} g(x) = u_{0}$, $\lim_{u \to u_{0}} f(u) = A$,
+    则必有 $\lim_{x \to x_{0}} f(g(x)) = A$
+    \item 设 $\lim_{x \to x_0} g(x)= \infty$, $\lim_{u \to \infty} f(u) = A$,
+    则必有 $\lim_{x \to x_{0}} f(g(x)) = A$
+  \end{choices}
+\end{question}
+
+\begin{analysis}
+  A 选项,
+  举反例 $f(x) = \tan x$, $g(x) = x$, $x_0 = \frac{\pi}{2}$,
+  则知 A 错误.
+
+  B 选项,
+  举反例, $f(x) = g(x) = (-1)^n$,
+  则知 B 错误.
+
+  C 选项,
+  必须有 $f(u)$ 在 $u = u_0$ 处连续,
+  或者 $x \in \stackrel{o}{U} \left(x, \delta\right)$ 时, $g(x) \neq u_0$,
+  具体可见知乎 \footnote{\url{https://www.zhihu.com/question/26162136}},
+  则知 C 错误.
+\end{analysis}
+
+\begin{question}
+  \meta{2023 AI 期中·20, \taskGrade[3]}
+  % \textit{知识点:} 函数与极限 / 几大定义和定理
+  下列命题中,
+  正确的是
+  \paren[C]
+  \begin{choices}
+    \item 若 $f'(x)$ 在 $(0,1)$ 内连续,
+    则 $f(x)$ 在 $(0,1)$ 内有界
+    \item 若 $f(x)$ 在 $(0,1)$ 内连续,
+    则 $f(x)$ 在 $(0,1)$ 内有界
+    \item 若 $f'(x)$ 在 $(0,1)$ 内有界,
+    则 $f(x)$ 在 $(0,1)$ 内有界
+    \item 若 $f(x)$ 在 $(0,1)$ 内有界,
+    则 $f'(x)$ 在 $(0,1)$ 内有界
+  \end{choices}
+\end{question}
+
+\begin{analysis}
+  对于 A, B,
+  令 $f(x) = \frac{1}{x}$,
+  则 $f'(x) = -\frac{1}{x^2}, f(x)$,
+  $f'(x) $ 在 $\left( 0,1 \right) $ 内均连续,
+  但 $f(x) $ 在 $\left( 0,1 \right) $ 内无界.
+
+  对于 D,
+  令 $f(x) = \sqrt{x}$,
+  则 $f'(x) = \frac{1}{2\sqrt{x}}$,
+  $f(x) $ 在 $\left( 0,1 \right) $ 内有界,
+  但 $f'(x) $ 在 $\left( 0,1 \right) $ 内无界.
+
+  对于 C,
+  若 $f'(x) $ 在 $\left( 0,1 \right) $ 内有界,
+  则在 $\left(0,1 \right) $ 内有 $\left| f'(x) \right|\leqslant M $.
+  则由拉格朗日中值定理可得
+  \[
+    f(x) -f\left( \frac{1}{2} \right) = f'\left( \xi \right) \left( x-\frac{1}{2} \right) , x\in \left( 0,1 \right)
+  \]
+  $\xi $ 在 $\frac{1}{2}$ 与 $x$ 之间.
+  对等式变形有
+  \[
+    \left| f(x) \right|\leqslant \left| f\left( \frac{1}{2} \right) \right|+\left| f'\left( \xi \right) \left( x-\frac{1}{2} \right) \right|\leqslant \left| f\left( \frac{1}{2} \right) \right|+\frac{1}{2}\left| f'\left( \xi \right) \right|\leqslant \left| f\left( \frac{1}{2} \right) \right|+\frac{M}{2}
+  \]
+  故 $f(x) $ 在 $\left( 0,1 \right) $ 内有界.
+  故 A, B, D 错误, C 正确.
+\end{analysis}
+
+\begin{question}
+  \meta{2020 AI 期中·11, \taskGrade[2]}
+  % \textit{知识点:} 函数与极限 / 几大定义和定理
+  设当 $x \in(0,+\infty)$ 时, $f(x) = x \sin \frac{1}{x}$,
+  则在 $(0,+\infty)$ 内
+  \paren[B]
+  \begin{choices}
+    \item $f(x)$ 与 $f'(x)$ 都无界
+    \item $f(x)$ 有界, $f'(x)$ 无界
+    \item $f(x)$ 与 $f'(x)$ 都有界
+    \item $f(x)$ 无界, $f'(x)$ 有界
+  \end{choices}
+\end{question}
+
+\begin{analysis}
+  $f(x)$ 可能无界的地方为 $x \to 0$ 或 $x \to \infty$ 时, $\lim_{x \to 0} f(x) = \lim_{x \to 0} x \sin \frac{1}{x} = 0$(无穷小量乘以有界量,
+  极限为零),
+  $\lim_{x \to \infty} f(x) = \lim_{x \to \infty} x \sin \frac{1}{x} = \lim_{x \to \infty} x \times \frac{1}{x} = 1$(等价无穷小替换)
+  即 $f(x)$ 有界.
+  $f'(x) = \sin \frac{1}{x} - \frac{1}{x} \cos \frac{1}{x}$ 无界,
+  见第一章例 3.8(47 页).
+\end{analysis}
+
+\begin{question}
+  \meta{2024 AI 期中·15, \taskGrade[2]}
+  % \textit{知识点:} 函数与极限 / 几大定义和定理
+  当 $x \to 0$ 时, $f(x)= \frac{1}{x^{2}} \sin \frac{1}{x}$ 是
+  \paren[D]
+  \begin{choices}
+    \item 无穷小量
+    \item 无穷大量
+    \item 有界但非无穷小量
+    \item 无界但非无穷大量
+  \end{choices}
+\end{question}
+
+\begin{analysis}
+  取 $x= \frac{1}{2 k \pi+\frac{\pi}{2}}, k \to \infty$,
+  则 $\lim_{k \to \infty}\left(2 k \pi+\frac{\pi}{2}\right)^{2} \sin \left(2 k \pi+\frac{\pi}{2}\right) = +\infty$;
+
+  取 $x= \frac{1}{2 k \pi-\frac{\pi}{2}}, k \to \infty$,
+  则 $\lim_{k \to \infty}\left(2 k \pi-\frac{\pi}{2}\right)^{2} \sin \left(2 k \pi-\frac{\pi}{2}\right)= -\infty$.
+
+  所以 $f(x)$ 是震荡的无界变量,
+  不是无穷大.
+\end{analysis}
+
+\begin{question}
+  \meta{2021 AI 期中·12, \taskGrade[3]}
+  % \textit{知识点:} 函数与极限 / 几大定义和定理
+  下列函数 $\frac{\sin x}{x^{2}}$, $\frac{x^{2}-1}{x-1} \upe^{\frac{1}{x-1}}$, $\arctan \frac{1}{x^{2}}$ 在 $(0,1)$ 内有界的个数为
+  \paren[C]
+  \begin{choices}
+    \item $0$
+    \item $1$
+    \item $2$
+    \item $3$
+  \end{choices}
+\end{question}
+
+\begin{analysis}
+  $\lim_{x \to 0^+} \frac{\sin x}{x^{2}} = \lim_{x \to 0^+} \frac{x}{x^{2}} = \frac{1}{x} = \infty$,
+  即无界.
+
+  $\lim_{x \to 0^+} \frac{x^{2}-1}{x-1} \upe^{\frac{1}{x-1}} = \upe^{-1}$, $\lim_{x \to 1^-} \frac{x^{2}-1}{x-1} \upe^{\frac{1}{x-1}} \xlongequal{\text{令}t = x-1} \lim_{x \to 0^-} (t+2) \upe^{\frac{1}{t}} = 0$,
+  即有界.
+
+  $\lim_{x \to 0^+} \arctan \frac{1}{x^{2}} = \frac{\pi}{2}$, $\lim_{x \to 1^-} \arctan \frac{1}{x^{2}} = \frac{\pi}{4}$,
+  即有界.
+\end{analysis}
+
+\begin{question}
+  \meta{2017 AI 期中·15, \taskGrade[3]}
+  % \textit{知识点:} 函数与极限 / 几大定义和定理
+  设 $f(x) $ 是 $\left( -\infty ,+\infty \right) $ 上的连续且非零的函数, $\varphi (x) $ 在 $\left( -\infty ,+\infty \right) $ 有定义且有间断点,
+  则下列必有间断点的是
+  \paren[D]
+  \begin{choices}
+    \item $\varphi \left(f(x) \right) $
+    \item $\left(\varphi (x) \right) ^2$
+    \item $f\left(\varphi (x) \right) $
+    \item $f(x) \varphi (x) $
+  \end{choices}
+\end{question}
+
+\begin{analysis}
+  A,
+  若 $f(x)$ 的值域在 $\varphi (x)$ 的连续区间内,
+  则没有间断点.
+  B,
+  若 $\varphi (x)$ 的间断点左右极限互为相反数,
+  则其平方相等,
+  即无间断点.
+  C, $f(x)$ 始终连续.
+  故选 D.
+\end{analysis}
+
+\begin{question}
+  \meta{2013 AI 期中·14, \taskGrade[3]}
+  % \textit{知识点:} 函数与极限 / 几大定义和定理
+  设函数 $f(x)$ 和 $\varphi (x)$ 在 $\left( -\infty , +\infty \right)$ 内有定义, $f(x)$ 为连续函数,
+  且 $f(x)\ne 0$, $\varphi (x)$ 有间断点,
+  则 \fillin[] 必有间断点.
+  \paren[B]
+  \begin{choices}
+    \item $\varphi \left[f(x) \right]$
+    \item $\frac{\varphi (x)}{f(x)}$
+    \item ${{\left[ \varphi (x) \right]}^2}$
+    \item  $f\left[\varphi (x) \right]$
+  \end{choices}
+\end{question}
+
+\begin{analysis}
+  考查对复合函数连续性的判断.
+
+  对 A 构造反例: 只需让 $f$ 的值域落在 $\varphi $ 的某段不包含间断点的定义区间上即可,
+  例如构造 $\varphi $ 有间断点 $x=5$ 而 $f$ 的值域是 $(-1, 1)$;
+
+  对 C 构造反例: 构造一个进行平方运算之后可以被消除的跳跃间断点,
+  例如 $\varphi (x)=\begin{cases}
+      1,  & x>0,      \\
+      -1, & x \le 0.
+    \end{cases}$
+
+  事实上也只有满足单侧连续且两侧极限互为相反数的跳跃间断点能被平方运算消除,
+  而其他类型的间断点均不可,
+  读者不妨思考原因;
+
+  对 D 构造反例: 构造 $\varphi (x)=\begin{cases}
+      x+1, & x \le 0, \\
+      x,   & x>0.
+    \end{cases}$
+
+  对 B 的分析: 在有意义的前提下（分母不为 $0$ 之类）,
+  连续函数与连续函数进行有限次四则运算、复合运算仍然得到连续函数.
+
+  若 $\frac{\varphi (x)}{f(x)}$ 是连续函数,
+  则 $\frac{\varphi (x)}{f(x)}\cdot f(x)=\varphi (x)$ 也是连续函数,
+  与已知矛盾,
+  故 B 错.
+\end{analysis}
+
+\begin{question}
+  \meta{2017 AI 期中·23, \taskGrade[3]}
+  % \textit{知识点:} 函数与极限 / 几大定义和定理
+  设函数 $f(x) $ 在 $\left[ 0,1 \right] $ 上有界,
+  且对 $x\in \left[0,\frac{1}{2} \right] $,
+  有 $f(2x) = 2f(x) $.
+  证明:
+  (1)  $f(0) = 0$;
+  (2)  $\lim_{x \to 0^+} f(x) = 0$.
+\end{question}
+
+\begin{proof}
+  (1) 由于 $f(2x) = 2f(x)$,
+  取 $x = 0$,
+  可知 $f(0) = 2f(0)$,
+  解得 $f(0) = 0$.
+
+  (2) 显然有 $f(x) = \frac{1}{2}f(2x)$.
+  则
+  \[
+    \uuline{\lim_{x \to 0^+} f(x)}= \lim_{x \to 0^+} \left[ \frac{1}{2} f(2x) \right]
+    = \frac{1}{2} \lim_{x \to 0^+} f(2x)
+    \xlongequal{\text{令~}t = 2x} \frac{1}{2} \lim_{t \to 0^+} f(t)
+    = \uuline{\frac{1}{2} \lim_{x \to 0^+} f(x)}
+  \]
+  即 $\lim_{x \to 0^+} f(x) = 0$.
+\end{proof}
+
+\section{极限的计算}
+
+本章仅涉及几种简单的极限计算方法,
+主要包括如下部分,
+将会在接下来的小节逐个进行介绍.
+% \begin{enumerate}
+%   \item 有理化
+%   \item 重要极限
+%   \item 等价无穷小替换
+%   \item 夹逼准则
+%   \item 单调有界+解方程
+%   \item 其他
+% \end{enumerate}
+
+\begin{knowledge}
+  \subsubsection{一些常用的结论}
+  \[
+    \lim_{n \to \infty} \sqrt[n]{a} = 1,
+    \quad
+    \lim_{n \to \infty} \sqrt[n]{n} = 1
+  \]
+
+  \subsubsection{极限的四则运算}
+
+  设 $\lim _{x \to x_{0}}f(x)=A$, $\lim _{x \to x_{0}}g(x)=B$,
+  则
+
+  \[
+    \lim _{x \to x_{0}}[kf(x)\pm lg(x)]
+    = k \lim _{x \to x_{0}}f(x)\pm l \lim _{x \to x_{0}}g(x)
+    = kA\pm lB
+  \]
+  其中 $k$, $l$ 为常数
+  \[
+    \lim _{x \to x_{0}}[f(x)\cdot g(x)]
+    = \lim _{x \to x_{0}}f(x)\cdot \lim _{x \to x_{0}}g(x)
+    = A\cdot B
+  \]
+  \[
+    \lim _{x \to x_{0}}\frac{f(x)}{g(x)}
+    = \frac{\lim \limits _{x \to x_{0}}f(x)}{\lim \limits _{x \to x_{0}}g(x)}
+    = \frac{A}{B}(B\neq 0)
+  \]
+  \[
+    \lim _{x \to x_{0}}[f(x)]^{n}
+    = [\lim _{x \to x_{0}}f(x)]^{n}
+  \]
+  其中, $n$ 为正整数.
+  注意, 当 $\lim f(x)$, $\lim g(x) $其中一个存在,
+  另一个不存在的时候,
+  上述左边的极限一定不存在.
+  当 $\lim f(x)$, $\lim g(x)$ 两个都不存在的时候,
+  左边的极限不一定不存在.
+
+  \subsubsection{多项式比值的极限}
+
+  自变量趋于无穷大时多项式比值的极限,
+  看分子分母多项式的次数,
+  次数相等则为最高次系数表,
+  分子高则为无穷大,
+  分母高则为 $0$.
+  \[
+    \lim _{x \to \infty}\frac{a_0x^m+a_1x^{m-1}+\cdots +a_m}{b_0x^n+b_1x^{n-1}+\cdots +b_n}=\begin{cases}
+      \frac{a_0}{b_0}, & m=n,  \\
+      0,               & m<n,  \\
+      \infty,          & m>n.
+    \end{cases}
+  \]
+\end{knowledge}
+
+\subsection{有理化}
+
+\begin{knowledge}
+  有理化的基本思路是:
+  通过乘以一个合适的形式来\textbf{消去根号或其他复杂形式},
+  从而简化极限的计算.
+  其核心原理是因式定理:
+  \begin{notes}[因式定理][][green]
+    设 $f(x)$ 是一个多项式,
+    若 $f(x)$ 满足 $f(x_0) = 0$,
+    则 $f(x)$ 必有因式 $(x-x_0)$.
+    即存在多项式 $g(x)$,
+    使得 $f(x) = (x-x_0)g(x)$.
+  \end{notes}
+  需要用到的一些公式包括 平方差、立方和、立方差 等.
+  \[
+    a^2 - b^2 = (a-b)(a+b),
+    \quad
+    a^3 + b^3 = (a+b)(a^2-ab+b^2),
+    \quad
+    a^3 - b^3 = (a-b)(a^2+ab+b^2)
+  \]
+
+  \begin{notes}[含根式极限的处理方法]
+    出现根号的,
+    一般都会需要有理化,
+    要么分子有理化,
+    要么分母有理化,
+    要么分子分母同时有理化
+    所谓有理化就是利用平方差、立方差、立方和公式乘以共轭（姑且这么说）.
+
+    或者就是换元,
+    代换题目中已有根式的最大公因式（姑且这么说）.
+  \end{notes}
+\end{knowledge}
+
+\begin{question}
+  \meta{2023 AI 期中·2, \taskGrade[3]}
+  % \textit{知识点:} 函数与极限 / 极限的计算 / 有理化
+  求极限 $\lim_{n \to +\infty} \left[ \sqrt{n+3\sqrt{n}}-\sqrt{n-\sqrt{n}} \right] =$
+  \fillin[$2$].
+\end{question}
+
+\begin{analysis}
+  $\begin{aligned}[t]
+        & \lim_{n \to +\infty} \left[ \sqrt{n+3\sqrt{n}}-\sqrt{n-\sqrt{n}} \right]                                                                                                  \\
+      = & \lim_{n \to +\infty} \frac{\left( \sqrt{n+3\sqrt{n}}-\sqrt{n-\sqrt{n}} \right) \left( \sqrt{n+3\sqrt{n}}+\sqrt{n-\sqrt{n}} \right)}{\sqrt{n+3\sqrt{n}}+\sqrt{n-\sqrt{n}}} \\
+      = & \lim_{n \to +\infty} \frac{4\sqrt{n}}{\sqrt{n+3\sqrt{n}}+\sqrt{n-\sqrt{n}}}
+      = \lim_{n \to +\infty} \frac{4}{\sqrt{1+3\sqrt{\frac{1}{n}}}+\sqrt{1-\sqrt{\frac{1}{n}}}}
+      = \frac{4}{2}
+      = 2.
+    \end{aligned}$
+\end{analysis}
+
+\begin{question}
+  \meta{2024 AI 期中·2, \taskGrade[3]}
+  % \textit{知识点:} 函数与极限 / 极限的计算 / 有理化
+  $\lim_{n \to \infty} \left[ \sqrt{1+2+\cdots+n}-\sqrt{1+2+\cdots+(n-1)} \right] =$
+  \fillin[$\frac{\sqrt{2}}{2}$].
+\end{question}
+
+\begin{analysis}
+  $\begin{aligned}[t]
+      \lim_{n \to \infty} \left[ \sqrt{1+2+\cdots+n}-\sqrt{1+2+\cdots+(n-1)} \right]
+       & = \lim_{n \to \infty} \left[ \sqrt{\frac{n(n+1)}{2}}-\sqrt{\frac{n(n-1)}{2}} \right]  \\
+       & = \frac{\sqrt{2}}{2} \lim_{n \to \infty} \left( \sqrt{n^{2}+n}-\sqrt{n^{2}-n} \right) \\
+       & = \frac{\sqrt{2}}{2} \lim_{n \to \infty} \frac{2 n}{\sqrt{n^{2}+n}+\sqrt{n^{2}-n}}
+      = \frac{\sqrt{2}}{2}.
+    \end{aligned}$
+\end{analysis}
+
+\begin{question}
+  \meta{2022 AI 期中·2, \taskGrade[3]}
+  % \textit{知识点:} 函数与极限 / 极限的计算 / 有理化
+  求极限 $\lim_{n \to +\infty}\left[ \sqrt{n(n+2)}-\sqrt{n^{2}-2 n+3} \right] =$
+  \fillin[$2$].
+\end{question}
+
+\begin{analysis}
+  有理化.
+  $\lim_{n \to +\infty}\left[ \sqrt{n(n+2)}-\sqrt{n^{2}-2 n+3} \right]
+    = \frac{4 n-3}{\sqrt{n(n+2)}+\sqrt{n^{2}-2 n+3}}
+    = 2$.
+\end{analysis}
+
+\begin{question}
+  \meta{2016 AI 期中·3, \taskGrade[3]}
+  % \textit{知识点:} 函数与极限 / 极限的计算 / 有理化
+  极限 $\lim_{x \to -\infty} x\left( \sqrt{x^2+100}+x \right) =$
+  \fillin[$-50$].
+\end{question}
+
+\begin{analysis}
+  $\begin{aligned}[t]
+      \lim_{x \to -\infty} x\left( \sqrt{x^2+100}+x \right)
+       & = \lim_{x \to -\infty} \frac{100x}{\sqrt{x^2+100}-x}
+      = \lim_{x \to -\infty} \frac{100}{\frac{\sqrt{x^2+100}}{x}-1}     \\
+       & = \lim_{x \to -\infty} \frac{100}{-\sqrt{1+\frac{100}{x^2}}-1}
+      = \frac{100}{-2}
+      = -50.
+    \end{aligned}$
+\end{analysis}
+
+\begin{question}
+  \meta{2021 AI 期中·5, \taskGrade[3]}
+  % \textit{知识点:} 函数与极限 / 极限的计算 / 有理化
+  极限 $\lim_{x \to 1^{+}} \frac{\sqrt{x}-1+\sqrt{x-1}}{\sqrt{x^{2}-1}} =$
+  \fillin[$\frac{1}{\sqrt{2}}$].
+\end{question}
+
+\begin{analysis}
+  $\begin{aligned}[t]
+      \lim_{x \to 1^{+}} \frac{\sqrt{x}-1+\sqrt{x-1}}{\sqrt{x^{2}-1}}
+       & \xlongequal{\text{令}u = x-1} \lim_{t \to 0^{+}} \frac{\sqrt{t+1}-1+\sqrt{t}}{\sqrt{(1+t)^{2}-1}}
+      = \lim_{t \to 0^{+}} \frac{\sqrt{t+1}-1+\sqrt{t}}{\sqrt{(t+2)t}}                                              \\
+       & \xlongequal{\text{分子分母同时除以}\sqrt{t}} \lim_{t \to 0^{+}} \frac{\frac{\sqrt{t+1}-1}{\sqrt{t}}+1}{\sqrt{t+2}}
+      = \lim_{t \to 0^{+}} \frac{\frac{\frac{1}{2}t}{\sqrt{t}}+1}{\sqrt{t+2}}                                       \\
+       & = \frac{0+1}{\sqrt{2}}
+      = \frac{1}{\sqrt{2}}.
+    \end{aligned}$
+\end{analysis}

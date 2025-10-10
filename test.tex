@@ -3,13 +3,28 @@
 \usepackage{zhlipsum}
 
 \ustbbooksetup {
-  global/reset-chapter = true,
-}
-
-\ctexset{
-  section = {
-    titleformat = \sectiontitleformat,
-  }
+  global = {
+    watermark = {watermark.pdf},
+    reset-chapter = true,
+  },
+  cover = {
+    top = {北京科技大学},
+    bottom = {假装有出版社},
+    title = {小标题},
+    subtitle = {长长长长的大标题},
+    author = {张\quad 三},
+    date = {\DocDate},
+    % bgimg = {firstpage.pdf},
+  },
+  pdf = {
+    title  = {长长长长长长长长长长的大标题},
+    % PDF 信息里的作者栏
+    author = {张\quad 三},
+    % PDF 信息里的主题
+    subject = {},
+    % PDF 信息里的关键词
+    keywords = {}
+  },
 }
 
 \begin{document}
@@ -29,125 +44,6 @@
 
 \mainmatter
 
-\part{绪论与基础知识}
-
-\chapter{绪论}
-
-\begin{flushright}
-  \faHandPointRight 习题见 \autopageref{cha:1}
-\end{flushright}
-
-\section{国内外研究现状}
-
-\zhlipsum[1]
-
-\section*{研究背景与意义}
-\manualSectionMark{研究背景与意义}
-
-\indentFirst{ false }
-
-\zhlipsum[2]
-
-\begin{question*}
-  \taskGrade
-  如图，已知$BO=2DO$, $CO=6AO$, 阴影部分的面积和是$13$平方 \footnote{测试}
-  厘米那么四边形 $ABCD$ 的面积是\fillin[]平方厘米.
-\end{question*}
-
-\begin{knowledge}
-  测试v技术的狙击手vv贝多芬v吧接受调查v年均就是女教师地方 VS监督局时间VS的接口技术的不能访问的接口技术。
-  \begin{enumerate}
-    \item 第一类间断点: 左极限和右极限都存在
-          \begin{enumerate}
-            \item 可去间断点(左极限 $=$ 右极限 $\neq$ 函数值):
-                  $\lim _{x \to x_{0}}f(x)=A\neq f(x_{0})$
-            \item 跳跃间断点(左极限 $\neq$ 右极限): $\lim _{x \to x_{0}^{-}}f(x) \neq \lim _{x \to x_{0}^{+}}f(x)$
-          \end{enumerate}
-    \item 第二类间断点: 左极限和右极限至少有一个不存在
-          \begin{enumerate}
-            \item 无穷间断点: $\lim _{x \to x_{0^-}}f(x)=\infty$ 或 $\lim _{x \to x_{0^+}}f(x)=\infty$;
-            \item 振荡间断点: $\lim _{x \to x_{0}}f(x)$ 振荡不存在
-          \end{enumerate}
-  \end{enumerate}
-
-  测试2
-  测试v技术的狙击手vv贝多芬v吧接受调查v年均就是女教师地方 VS监督局时间VS的接口技术的不能访问的接口技术。
-\end{knowledge}
-
-\begin{question}
-  \taskGrade[2]
-  如图，已知$BO=2DO$, $CO=6AO$, 阴影部分的面积和是$13$平方 \footnote{测试}
-  厘米那么四边形 $ABCD$ 的面积是\fillin[]平方厘米.
-\end{question}
-
-\begin{question}
-  \taskGrade[5]
-  如图，已知$BO=2DO$, $CO=6AO$, 阴影部分的面积和是$13$平方
-  厘米那么四边形 $ABCD$ 的面积是\fillin[]平方厘米 \footnote{测试}.
-\end{question}
-
-\zhlipsum[6-7]
-
-\newpage
-
-\esection{选修内容标题}
-% 设置为缩进
-\indentFirst{ true }
-
-\zhlipsum[6-7]
-
-\newpage
-\section{国内外研究现状}
-
-\begin{question*}
-  如图，已知$BO=2DO$, $CO=6AO$, 阴影部分的面积和是$13$平方
-  厘米那么四边形 $ABCD$ 的面积是\fillin[]平方厘米.
-\end{question*}
-
-\begin{question*}
-  如图，已知$BO=2DO$, $CO=6AO$, 阴影部分的面积和是$13$平方
-  厘米那么四边形 $ABCD$ 的面积是\fillin[]平方厘米.
-\end{question*}
-
-\begin{question*}
-  如图，已知$BO=2DO$, $CO=6AO$, 阴影部分的面积和是$13$平方
-  厘米那么四边形 $ABCD$ 的面积是\fillin[]平方厘米.
-\end{question*}
-
-\begin{question*}
-  如图，已知$BO=2DO$, $CO=6AO$, 阴影部分的面积和是$13$平方
-  厘米那么四边形 $ABCD$ 的面积是\fillin[]平方厘米.
-\end{question*}
-
-\newpage
-\section*{国外研究现状}
-\manualSectionMark{国外研究现状}
-
-\subsection{}
-\zhlipsum[4]
-
-\subsection{}
-\zhlipsum[5]
-
-\setcounter{chapter}{10}
-\chapter{一个很长很长很长很长很长很长很长很长很长很长很长很长很长的标题}
-\zhlipsum[1]
-
-\chapter{隐函数及由参数方程确定的函数的导数}
-\zhlipsum[6]
-
-\cleardoublepage
-\section{重积分的概念、性质以及简单的累次积分换序}
-\zhlipsum[7]
-
-\cleardoublepage
-\section{不定积分与定积分的常用积分法（重点）}
-\zhlipsum[8]
-
-\cleardoublepage
-\section{第一型曲线积分——对弧长的曲线积分}
-\zhlipsum[9]
-
 \part{方法与实验}
 
 \ustbbooksetup {
@@ -157,7 +53,7 @@
     }
 }
 
-\chapter{研究方法} \label{cha:1}
+\chapter{研究方法} \label{part1:cha:1}
 
 \begin{question}
   \meta{2014 期中·1, \taskGrade[]}
@@ -188,7 +84,7 @@
 \end{question}
 
 \begin{solution}
-  \meta{2014 期中·1, \taskGrade[1]}
+  \meta{2014 期中·1, \taskGrade[1-3]}
   如图，已知$BO=2DO$, $CO=6AO$, 阴影部分的面积和是$13$平方
   厘米那么四边形 $ABCD$ 的面积是\fillin[]平方厘米.
 \end{solution}
@@ -244,48 +140,8 @@
     },
 }
 
-\chapter{实验结果与分析}
-
-\section{实验结果与分析I}
-
-\zhlipsum[14]
-
-\section{实验结果与分析II}
-
-\begin{question}
-  如图，已知$BO=2DO$, $CO=6AO$, 阴影部分的面积和是$13$平方
-  厘米那么四边形 $ABCD$ 的面积是\fillin[]平方厘米.
-\end{question}
-
-\begin{question}
-  如图，已知$BO=2DO$, $CO=6AO$, 阴影部分的面积和是$13$平方
-  厘米那么四边形 $ABCD$ 的面积是\fillin[]平方厘米.
-\end{question}
-
-\begin{question}
-  如图，已知$BO=2DO$, $CO=6AO$, 阴影部分的面积和是$13$平方
-  厘米那么四边形 $ABCD$ 的面积是\fillin[]平方厘米.
-\end{question}
-
-\begin{question}
-  如图，已知$BO=2DO$, $CO=6AO$, 阴影部分的面积和是$13$平方
-  厘米那么四边形 $ABCD$ 的面积是\fillin[]平方厘米.
-\end{question}
-
-\chapter{实验结果与分析}
-\zhlipsum[14]
-
-\chapter{实验结果与分析}
-\zhlipsum[14]
-
-\chapter{实验结果与分析}
-\zhlipsum[14]
-
-\chapter{实验结果与分析}
-\zhlipsum[14]
-
-\chapter{实验结果与分析}
-\zhlipsum[14]
+\chapter{函数与极限}\label{part2:cha:1}
+\input{Part_2/ch1.tex}
 
 \backmatter
 \makeBackCover
