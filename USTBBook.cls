@@ -9,7 +9,7 @@
 
 \NeedsTeXFormat{LaTeX2e}[2017/04/01]
 \RequirePackage{expl3}
-\ProvidesExplPackage {USTBBook} {2025/07/01} {v0.1.0}{LaTeX Book template for USTB}
+\ProvidesExplPackage {USTBBook} {2025/10/11} {v0.1.2}{LaTeX Book template for USTB}
 
 % 检查 LaTeX2e kernel 版本
 \msg_new:nnn { ustb-book } { latex-too-old }
@@ -897,30 +897,30 @@
 
 % 通用盒子
 \DeclareTColorBox{knowledge}{ O{知识点睛} }{
-  enhanced~jigsaw,
-  breakable,
-  width=\textwidth,
-  opacityframe=0.5,opacityback=0.25,opacitybacktitle=0.25,
-  colback=gangtiehong!20,colframe=gangtiehong,colbacktitle=gangtiehong,
-  boxrule=0pt,
-  toprule=1.5pt,
-  bottomrule=1.5pt,
-  top=15pt,
-  left=0pt,
-  right=0pt,
-  arc=0mm,
-  parbox=true,                % ← 允许正常段落格式
-  before~upper=\setlength{\parindent}{2em}, % ← 每段首行缩进 2em
-  overlay~unbroken~and~first = {
-      \node[rectangle, %opacity=.3,
-        text=white, %drop~shadow={opacity=.3, shadow~xshift=0.1cm},
-        rounded~corners=2pt,
-        inner~sep=2mm,
-        fill=gangtiehong,
-        anchor=center,
-        font=\sffamily\large,
-      ] at ([yshift=.5mm]frame.north) {~#1~};
-    }
+enhanced~jigsaw,
+breakable,
+width=\textwidth,
+opacityframe=0.5,opacityback=0.25,opacitybacktitle=0.25,
+colback=gangtiehong!20,colframe=gangtiehong,colbacktitle=gangtiehong,
+boxrule=0pt,
+toprule=1.5pt,
+bottomrule=1.5pt,
+top=15pt,
+left=0pt,
+right=0pt,
+arc=0mm,
+parbox=true,                % ← 允许正常段落格式
+before~upper=\setlength{\parindent}{2em}, % ← 每段首行缩进 2em
+overlay~unbroken~and~first = {
+\node[rectangle, %opacity=.3,
+  text=white, %drop~shadow={opacity=.3, shadow~xshift=0.1cm},
+  rounded~corners=2pt,
+  inner~sep=2mm,
+  fill=gangtiehong,
+  anchor=center,
+  font=\sffamily\large,
+] at ([yshift=.5mm]frame.north) {~#1~};
+}
 }
 
 % 笔记环境
@@ -1181,8 +1181,10 @@
 
 % 清理
 \cs_new_protected:Npn \__clear_question_hooks: {
-  \RemoveFromHook{cmd/chapter/before} [reset-per-chapter]
-  \RemoveFromHook{cmd/section/before} [reset-per-section]
+  \IfHookEmptyF{cmd/chapter/before} {
+    \RemoveFromHook{cmd/chapter/before} [reset-per-chapter]
+    \RemoveFromHook{cmd/section/before} [reset-per-section]
+  }
 }
 
 % 默认题号样式
