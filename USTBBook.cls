@@ -9,7 +9,7 @@
 
 \NeedsTeXFormat{LaTeX2e}[2017/04/01]
 \RequirePackage{expl3}
-\ProvidesExplPackage {USTBBook} {2025/10/11} {v0.1.2}{LaTeX Book template for USTB}
+\ProvidesExplPackage {USTBBook} {2025/10/26} {v0.1.3}{LaTeX Book template for USTB}
 
 % 检查 LaTeX2e kernel 版本
 \msg_new:nnn { ustb-book } { latex-too-old }
@@ -25,9 +25,12 @@
 \sys_if_engine_xetex:F
 { \msg_fatal:nn { ustb-book } { incompatible-engine } }
 
-% 使用 l3keys 定义 \examsetup 配置命令
+% 使用 l3keys 定义 \ustbbooksetup 配置命令
 \NewDocumentCommand \ustbbooksetup { m }
 { \keys_set:nn { ustb-book } {#1} }
+
+\NewDocumentCommand \examsetup { m }
+{ keys_set:nn { exam-zh } {#1} }
 
 % 加载文档类和宏包
 
@@ -92,7 +95,7 @@
 \RequirePackage { amsmath, mathtools }
 \RequirePackage [ shortlabels, inline ] { enumitem }
 \RequirePackage { varwidth }
-\RequirePackage { tabu, booktabs, tabularx }
+\RequirePackage { tabu, booktabs, tabularx, makecell }
 \RequirePackage { fontawesome5 }
 
 \RequirePackage { exam-zh-question }
@@ -771,6 +774,9 @@
 % 默认的 itemize 环境
 \setlist[itemize]{left=\parindent, itemsep=0pt, parsep=0pt, topsep=0pt}
 \setlist[itemize,2]{left=0em, labelsep=-0.5em, itemsep=0pt, parsep=0pt, topsep=0pt}
+% 默认的 description 环境
+\setlist[description]{leftmargin=\parindent, itemsep=0pt, parsep=0pt, topsep=0pt}
+\setlist[description,2]{left=0em, labelsep=-0.5em, itemsep=0pt, parsep=0pt, topsep=0pt}
 
 \newlist{inenum}{enumerate*}{2}
 \setlist[inenum]{(1), itemjoin={\quad}}
