@@ -741,6 +741,24 @@
 \group_end:
 \sectionmark*{#1}
 }
+
+\NewDocumentCommand{\esubsection}{ m }
+{
+  \group_begin:
+  \bool_if:NTF {\l__my_section_exercise_bool}
+  { \ctexset{
+    % subsection/name={},
+    subsection/number = {\texorpdfstring{\makebox[0pt][r]{${}^*$}}{*}\chinese{subsection}},
+    subsection/aftername = {、},
+    } }
+{ \ctexset{
+  subsection/name={({\texorpdfstring{\makebox[0pt][r]{${}^*$}}{*}},)},
+  subsection/number = \Alpha{subsection},
+  subsection/aftername = {\quad},
+} }
+\subsection{#1}
+\group_end:
+}
 % =============================== %
 
 % 定义是否每部分重置章数的选项
@@ -927,6 +945,24 @@ overlay~unbroken~and~first = {
   font=\sffamily\large,
 ] at ([yshift=.5mm]frame.north) {~#1~};
 }
+}
+
+% 定义新环境 SideBox, 带一个可选参数
+\DeclareTColorBox{SideBox}{O{}}
+{
+  enhanced,
+  breakable,
+  sharp~corners,
+  colframe=gangtiehong,
+  colback=gangtiehong!5,
+  boxrule=1pt,
+  sidebyside,
+  sidebyside~align=center,
+  sidebyside~gap=1em,
+  width=.9\textwidth,
+  lefthand~width=0.7\textwidth,
+  segmentation~style={draw=gangtiehong, line~width=1pt},
+  #1 % <- 用户可覆盖配置
 }
 
 % 笔记环境
